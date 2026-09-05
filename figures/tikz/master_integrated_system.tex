@@ -25,6 +25,7 @@
 \pgfsetlayers{background,main,foreground}
 
 % --- Global CircuiTikZ IEEE Configuration (Rule D) ---
+\ctikzset{transformers/thickness/.code={\ctikzset{quadpoles/thickness=#1}}}
 \ctikzset{
     logic ports = ieee,
     bipoles/thickness = 1.5,
@@ -36,7 +37,10 @@
     resistors/scale = 0.75,
     diodes/scale = 0.75,
     transistors/scale = 0.80,
-    sources/scale = 0.80
+    sources/scale = 0.80,
+    transistors/thickness = 1.5,
+    transformers/thickness = 1.5,
+    grounds/thickness = 1.5
 }
 
 % --- Strict Monochrome Styles (Rule A) ---
@@ -141,18 +145,18 @@
     % Full-Wave Diode Bridge (100% Manhattan Dual-Leg Architecture, Rule C)
     % Leg 1 (X = 5.5):
     % Lower Diode D3: from Ground to SEC_A1 (positioned strictly below Y = T1.B2 for clearance)
-    \draw[signal_wire] (5.5, 0.0) node[circ] {} to[D, l=$D_3$] (5.5, 2.0) -- (SEC_A1) node[circ] {};
+    \draw[signal_wire] (5.5, 0.0) node[circ] {} to[D*, l=$D_3$] (5.5, 2.0) -- (SEC_A1) node[circ] {};
     % Upper Diode D1: from SEC_A1 to V_raw Rail
-    \draw[signal_wire] (SEC_A1) to[D, l=$D_1$] (5.5, 8.0) node[circ] {};
+    \draw[signal_wire] (SEC_A1) to[D*, l=$D_1$] (5.5, 8.0) node[circ] {};
 
     % Leg 2 (X = 7.5):
     % Lower Diode D4: from Ground to SEC_A2
-    \draw[signal_wire] (7.5, 0.0) node[circ] {} to[D, l_=$D_4$] (SEC_A2) node[circ] {};
+    \draw[signal_wire] (7.5, 0.0) node[circ] {} to[D*, l_=$D_4$] (SEC_A2) node[circ] {};
     % Upper Diode D2: from SEC_A2 to V_raw Rail
-    \draw[signal_wire] (SEC_A2) to[D, l_=$D_2$] (7.5, 8.0) node[circ] {};
+    \draw[signal_wire] (SEC_A2) to[D*, l_=$D_2$] (7.5, 8.0) node[circ] {};
 
-    % Bulk Filter Capacitor C_filt (component eC, positive to negative)
-    \draw[signal_wire] (10.0, 8.0) node[circ] {} to[eC, l=$C_{filt}$] (10.0, 0.0) node[circ] {};
+    % Bulk Filter Capacitor C_filt (component pC, positive to negative)
+    \draw[signal_wire] (10.0, 8.0) node[circ] {} to[pC, l=$C_{filt}$] (10.0, 0.0) node[circ] {};
 
     % Bleeder Resistor R_bleed
     \draw[signal_wire] (12.0, 8.0) node[circ] {} to[R, l=$R_{bleed}$] (12.0, 0.0) node[circ] {};
@@ -162,8 +166,8 @@
     % =========================================================================
 
     \coordinate (VREF) at (14.5, 4.0);
-    \draw[signal_wire] (14.5, 8.0) node[circ] {} to[R, l=$R_{bias}$] (VREF) node[circ] {};
-    \draw[signal_wire] (14.5, 0.0) node[circ] {} to[zD, l_=$D_Z$] (VREF);
+    \draw[signal_wire] (14.5, 8.0) node[circ] {} to[R, l=$R_{bias}$] (VREF);
+    \draw[signal_wire] (14.5, 0.0) node[circ] {} to[zD*, l_=$D_Z$] (VREF);
     \node[above left=2pt] at (VREF) {$V_{ref}$};
 
     % =========================================================================
@@ -305,9 +309,12 @@
         \draw[probe_line] (1.0, 10.35) -- (1.0, 0 |- T1.A1) node[circ] {};
         \draw[probe_line] (4.5, 10.35) -- (4.5, 0 |- T1.B1);
         \draw[probe_line] (10.0, 10.35) -- (10.0, 8.0) node[circ] {};
-        \draw[probe_line] (14.0, 10.35) -- (14.0, 9.2) -- (15.5, 9.2) -- (15.5, 4.0) node[circ] {};
+        \draw[probe_line] (14.0, 10.35) -- (14.0, 9.2) -- (12.5, 9.2) -- (12.5, 4.0) -- (VREF);
         \draw[probe_line] (46.5, 10.35) -- (46.5, 0 |- Qpass.E) node[circ] {};
     \end{pgfonlayer}
+
+    % Clean Reference Junction Dot (Fix 4: Placed after all wires and probe lines)
+    \node[circ] at (VREF) {};
 
 \end{circuitikz}
 \end{document}

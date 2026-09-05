@@ -4,6 +4,7 @@
 % =============================================================================
 
 % --- CircuiTikZ Global Configuration (Strict IEEE Compliance) ---
+\ctikzset{transformers/thickness/.code={\ctikzset{quadpoles/thickness=#1}}}
 \ctikzset{
     american,
     cute inductors,
@@ -16,7 +17,10 @@
     capacitors/scale = 0.8,
     resistors/scale = 0.8,
     diodes/scale = 0.8,
-    sources/scale = 0.85
+    sources/scale = 0.85,
+    transistors/thickness = 1.5,
+    transformers/thickness = 1.5,
+    grounds/thickness = 1.5
 }
 
 % --- Multi-Layer Graphics Architecture (PGF Layers) ---
