@@ -1,0 +1,43 @@
+\documentclass[tikz,border=8mm]{standalone}
+\usepackage[american]{circuitikz}
+
+\begin{document}
+\begin{tikzpicture}[every node/.style={font=\sffamily\small}]
+  % Grid: bridge columns x=9 and x=13; VRAW y=8; GND y=0; AC nodes y=4.
+  \node[transformer core] (T1) at (3,4) {};
+  \node[below=8mm] at (T1) {T1};
+  \draw (0,6) to[sV,l=VAC] (0,2);
+  \draw (0,6) |- (T1.A1);
+  \draw (0,2) |- (T1.A2);
+  \draw (T1.B1) -- ++(1,0) node[right] {VAC1};
+  \draw (T1.B2) -- ++(1,0) node[right] {VAC2};
+
+  % Rails. The secondary labels deliberately couple to the bridge without
+  % any physical secondary wire crossing a rectifier column.
+  \draw (8,8) -- (17,8) node[right] {VRAW};
+  \draw (8,0) -- (17,0);
+  \draw (17,0) node[ground] {};
+  \node[right] at (17,0) {GND};
+
+  % VAC1 column: D1 anode=VAC1/cathode=VRAW; D3 anode=GND/cathode=VAC1.
+  \coordinate (ACone) at (9,4);
+  \draw (ACone) to[D,l=D1] (9,8);
+  \draw (9,0) to[D,l_=D3] (ACone);
+  \draw (ACone) node[circ,fill=black,inner sep=1pt] {};
+  \draw (9,8) node[circ,fill=black,inner sep=1pt] {};
+  \draw (9,0) node[circ,fill=black,inner sep=1pt] {};
+  \node[left] at (ACone) {VAC1};
+
+  % VAC2 column: D2 anode=VAC2/cathode=VRAW; D4 anode=GND/cathode=VAC2.
+  \coordinate (ACtwo) at (13,4);
+  \draw (ACtwo) to[D,l=D2] (13,8);
+  \draw (13,0) to[D,l_=D4] (ACtwo);
+  \draw (ACtwo) node[circ,fill=black,inner sep=1pt] {};
+  \draw (13,8) node[circ,fill=black,inner sep=1pt] {};
+  \draw (13,0) node[circ,fill=black,inner sep=1pt] {};
+  \node[right] at (ACtwo) {VAC2};
+
+  % Reservoir capacitor: exactly VRAW to GND.
+  \draw (16,8) to[C,l=C1] (16,0);
+\end{tikzpicture}
+\end{document}

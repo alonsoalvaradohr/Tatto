@@ -1,0 +1,6 @@
+# MATLAB & Simscape Electrical Simulation Suite
+Contains executable MATLAB scripts (.m), Simscape physical modeling scripts, and numerical verification routines.
+- simscape_transformer_bridge.m
+- simscape_linear_regulator.m
+- simscape_full_system.m
+- bode_stability_analysis.m

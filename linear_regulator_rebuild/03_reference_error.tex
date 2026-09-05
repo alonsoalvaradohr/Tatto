@@ -1,0 +1,52 @@
+\documentclass[tikz,border=8mm]{standalone}
+\usepackage[american]{circuitikz}
+
+\begin{document}
+\begin{tikzpicture}[every node/.style={font=\sffamily\small}]
+  % Master rails: VRAW y=9, GND y=0, TAIL y=2.
+  \draw (0,9) -- (11,9) node[right] {VRAW};
+  \draw (0,0) -- (11,0) node[right] {GND};
+  \draw (11,0) node[ground] {};
+
+  % Reference: R3 terminates at REF; DZ anode=GND and cathode=REF.
+  \coordinate (REFnode) at (1.5,4);
+  \draw (1.5,9) to[R,l=R3] (REFnode);
+  \draw (1.5,0) to[zD,l_=DZ] (REFnode);
+  \draw (REFnode) node[circ,fill=black,inner sep=1pt] {};
+  \node[left] at (REFnode) {REF};
+
+  % Differential NPN pair.  Bases are connected by their named networks.
+  \node[npn] (Q1) at (5,4) {};
+  \node[npn] (Q2) at (9,4) {};
+  \node[below right=5pt] at (Q1) {Q1};
+  \node[below right=5pt] at (Q2) {Q2};
+  \draw (REFnode) -| (4.15,4) -- (Q1.B);
+  \draw (11,4) node[right] {FB} -- (Q2.B);
+
+  % Shared tail and current source.
+  \draw (Q1.E) |- (5,2) -- (9,2) -| (Q2.E);
+  \draw (7,2) to[isource,l_=I1] (7,0);
+  \draw (7,2) node[circ,fill=black,inner sep=1pt] {};
+  \node[below right=4pt] at (7,2) {TAIL};
+
+  % PNP active load; Q3 is diode-connected and Q4 mirrors its base current.
+  \node[pnp,xscale=-1] (Q3) at (5,7) {};
+  \node[pnp] (Q4) at (9,7) {};
+  \node[above=5pt] at (Q3) {Q3};
+  \node[above=5pt] at (Q4) {Q4};
+  \draw (Q3.E) |- (5,9);
+  \draw (Q4.E) |- (9,9);
+  \draw (Q1.C) -- (Q3.C);
+  \draw (Q2.C) -- (Q4.C);
+
+  % Diode-connected Q3 and Q4 mirror-base corridor.  Q3.C is the
+  % collector junction; mirrorbase is the separate common-base junction.
+  \coordinate (mirrorbase) at (7,6.15);
+  \draw (Q3.C) -| (mirrorbase);
+  \draw (Q3.B) -| (mirrorbase) -| (Q4.B);
+  \node[circ,fill=black,inner sep=1pt] at (Q3.C) {};
+  \node[circ,fill=black,inner sep=1pt] at (mirrorbase) {};
+  \draw (Q2.C) -- ++(1.2,0) node[right] {N2};
+  \draw (Q2.C) node[circ,fill=black,inner sep=1pt] {};
+\end{tikzpicture}
+\end{document}

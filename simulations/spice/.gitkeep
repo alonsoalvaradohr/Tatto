@@ -1,0 +1,7 @@
+# SPICE Simulation Suite
+Contains SPICE netlists (.cir), model definitions, and validation testbenches.
+- 01_transformer_bridge.cir
+- 02_reference_error.cir
+- 03_vas_driver.cir
+- 04_pass_limiter.cir
+- full_system.cir

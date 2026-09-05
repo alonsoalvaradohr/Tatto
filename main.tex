@@ -1,0 +1,65 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,es-tabla]{babel}
+\usepackage{lmodern}
+\usepackage{geometry}
+\geometry{margin=2cm}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{siunitx}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usepackage[american, cute inductors, american currents, american voltages]{circuitikz}
+
+\usetikzlibrary{calc, positioning, backgrounds}
+
+\ctikzset{
+    logic ports=ieee,
+    resistors/scale=0.70,
+    capacitors/scale=0.65,
+    diodes/scale=0.65,
+    transistors/scale=0.80,
+    sources/scale=0.70,
+    bipoles/thickness=1.0,
+    nodes width=0.055
+}
+
+\title{\textbf{Proyecto Tatto: Fuente Lineal Regulada}\\
+\large Arquitectura Topológica Multinivel y Análisis de Señal}
+\author{\textbf{Enjambre de Arquitectura y QA Electrónico}}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Este documento presenta el diseño unificado y la síntesis topológica de una Fuente de Alimentación Lineal Regulada de precisión, estructurada en tres niveles jerárquicos de abstracción: Nivel Macro (conversión y potencia), Nivel Silicio (regulador serie con protección de sobrecorriente) y Nivel Transistor (amplificador de error discreto con par diferencial, espejo de corriente, VAS con compensación Miller y driver Push-Pull Clase AB). Asimismo, se incluye la capa analítica de instrumentación virtual superpuesta en tiempo real.
+\end{abstract}
+
+\section{Esquemático Maestro Unificado}
+El diagrama general multinivel unifica todas las etapas en un solo plano ortogonal sin colisiones espaciales:
+
+\begin{center}
+    \includegraphics[width=\textwidth]{circuito.pdf}
+\end{center}
+
+\section{Sistema de Potencia y Transformación (Nivel Macro)}
+\begin{center}
+    \input{transformador.tex}
+\end{center}
+
+\section{Etapa de Regulación Lineal (Nivel Silicio)}
+\begin{center}
+    \input{regulador.tex}
+\end{center}
+
+\section{Amplificador de Error Discreto (Nivel Transistor)}
+\begin{center}
+    \input{amplificador.tex}
+\end{center}
+
+\end{document}

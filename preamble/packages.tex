@@ -1,0 +1,57 @@
+% =============================================================================
+% TATTO PROJECT — MODULAR PREAMBLE: PACKAGES
+% Classification: Hardware Synthesis & Documentation Scaffolding
+% Engine: LuaLaTeX (TeX Live 2025/2026)
+% =============================================================================
+
+% --- Core Mathematical Foundations ---
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{bm}
+
+% --- Microtypography & Layout ---
+\usepackage{microtype}
+
+% --- Units & Symbols (IEEE / SI Compliant) ---
+\usepackage{siunitx}
+\sisetup{
+    detect-all,
+    per-mode = symbol,
+    tight-spacing = true
+}
+
+% --- Tabular Engineering Layouts ---
+\usepackage{booktabs}
+\usepackage{array}
+
+% --- Color Definitions & Management ---
+\usepackage{xcolor}
+
+% --- Core PGF / TikZ Graphics Engine ---
+\usepackage{tikz}
+\usetikzlibrary{
+    calc,
+    arrows.meta,
+    positioning,
+    patterns,
+    backgrounds,
+    intersections,
+    decorations.pathmorphing,
+    fit
+}
+
+% --- PGFPlots Visualization ---
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+
+% --- CircuiTikZ Electronic Schematic Synthesis (CTAN v1.8.5) ---
+\usepackage{circuitikz}
+
+% --- Modular Standalone Document Integration ---
+\makeatletter
+\@ifclassloaded{standalone}{}{%
+    \usepackage{standalone}%
+}
+\makeatother
+

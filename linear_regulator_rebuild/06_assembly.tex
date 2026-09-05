@@ -1,0 +1,18 @@
+\documentclass[tikz,border=8mm]{standalone}
+\usepackage{graphicx}
+
+\begin{document}
+\begin{tikzpicture}
+  % Approved sheets are placed as independent vector PDFs; no circuit is redrawn.
+  \node[anchor=north west,inner sep=0] at (0,0)
+    {\includegraphics[width=20cm]{01_scopes.pdf}};
+  \node[anchor=north west,inner sep=0] at (0,-5.1)
+    {\includegraphics[width=10cm]{02_transformer_bridge.pdf}};
+  \node[anchor=north west,inner sep=0] at (11.0,-5.1)
+    {\includegraphics[width=8.5cm]{03_reference_error.pdf}};
+  \node[anchor=north west,inner sep=0] at (0,-12.4)
+    {\includegraphics[width=10cm]{04_vas_driver.pdf}};
+  \node[anchor=north west,inner sep=0] at (11.0,-12.4)
+    {\includegraphics[width=10cm]{05_pass_feedback.pdf}};
+\end{tikzpicture}
+\end{document}

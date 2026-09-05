@@ -1,0 +1,150 @@
+\documentclass[border=10pt]{standalone}
+
+% =============================================================================
+% TATTO PROJECT — STAGE 1: TRANSFORMER & FULL-WAVE BRIDGE RECTIFIER
+% Standard: IEEE Std 315 / CTAN CircuiTikZ 1.8.5 / PGF 3.1.10+
+% Routing: Strict Manhattan Orthogonal (100% |-, -|, and colinear --)
+% Parameterization: 100% Parametrically Agnostic (Symbolic)
+% Layer Isolation: Analytical Instrumentation strictly on pgfonlayer background
+% =============================================================================
+
+% --- Load Modular Scaffolding Preambles ---
+\IfFileExists{../../preamble/packages.tex}{%
+    \input{../../preamble/packages.tex}%
+    \input{../../preamble/circuitikz_styles.tex}%
+    \input{../../preamble/macros.tex}%
+}{%
+    \input{preamble/packages.tex}%
+    \input{preamble/circuitikz_styles.tex}%
+    \input{preamble/macros.tex}%
+}
+
+\begin{document}
+\begin{circuitikz}[american, line width=0.75pt]
+
+    % =========================================================================
+    % 1. BACKGROUND LAYER: DOMAINS & VIRTUAL OSCILLOSCOPE INSTRUMENTATION
+    % =========================================================================
+    \begin{pgfonlayer}{background}
+        
+        % --- Galvanic Isolation & Functional Domain Boundaries ---
+        \draw[domain_mains] (-1.3, 0.3) rectangle (2.3, 5.2);
+        \node[anchor=south west, font=\tiny\sffamily\bfseries\color{blue!75!black}] 
+            at (-1.2, 0.45) {Dominio Primario (Aislamiento Galvánico)};
+
+        \draw[domain_secondary] (2.7, 0.3) rectangle (14.6, 6.3);
+        \node[anchor=south west, font=\tiny\sffamily\bfseries\color{green!50!black}] 
+            at (2.9, 0.45) {Dominio Secundario (Rectificación \& Filtrado Bulk)};
+
+        % --- Virtual Oscilloscope 1: Secondary AC Waveform (TP_1) ---
+        \renderScope{4.0}{9.4}{4.4}{2.8}{CH1: $v_{\mathrm{sec}}(t)$}{$\mathrm{TP}_1$}{
+            % Waveform: Pure sinusoidal secondary voltage
+            \draw[scope_wave_ac] plot[domain=-1.9:1.9, samples=80] (\x, {0.75*sin(360*\x/1.8)});
+            
+            % Peak and Period Annotations
+            \node[scope_graticule_label, anchor=east] at (-0.05, 0.75) {$+\hat{V}_{\mathrm{sec}}$};
+            \node[scope_graticule_label, anchor=east] at (-0.05, -0.75) {$-\hat{V}_{\mathrm{sec}}$};
+            \draw[scope_axis_dashed] (-1.9, 0.75) -- (1.9, 0.75);
+            \draw[scope_axis_dashed] (-1.9, -0.75) -- (1.9, -0.75);
+            \node[scope_graticule_label, anchor=south east] at (1.85, -1.15) {$T_{\mathrm{line}} = \frac{1}{\fline}$};
+        }
+
+        % --- Virtual Oscilloscope 2: Raw DC Rail with Ripple (TP_2) ---
+        \renderScope{11.6}{9.4}{4.4}{2.8}{CH2: $V_{\mathrm{RAW}}(t)$}{$\mathrm{TP}_2$}{
+            % Waveform: Full-wave rectified filtered DC with ripple
+            \draw[scope_wave_dc] plot[domain=-1.9:1.9, samples=120] 
+                (\x, {0.25 + 0.35*exp(-mod(\x+1.9, 0.95)/0.85)});
+            
+            % Ripple and DC average annotations
+            \draw[scope_axis_dashed] (-1.9, 0.60) -- (1.9, 0.60);
+            \draw[scope_axis_dashed] (-1.9, 0.35) -- (1.9, 0.35);
+            \node[scope_graticule_label, anchor=east] at (-0.05, 0.60) {$V_{\mathrm{RAW,max}}$};
+            \node[scope_graticule_label, anchor=east] at (-0.05, 0.35) {$\bar{V}_{\mathrm{RAW}}$};
+            \node[scope_graticule_label, anchor=center] at (0, -0.60) {$V_{\mathrm{RAW,max}} = \hat{V}_{\mathrm{sec}} - 2V_D$};
+            \node[scope_graticule_label, anchor=center] at (0, -0.95) {$\Delta V_{\mathrm{ripple}} \approx \frac{\iavg}{2\fline\cfilt}$};
+        }
+
+        % --- Continuous Instrumentation Probe Lines (Main Layer to Background Scopes) ---
+        \draw[probe_line] (4.0, 4.30) -- (4.0, 8.0);
+        \draw[probe_line] (11.6, 5.50) -- (11.6, 8.0);
+
+    \end{pgfonlayer}
+
+    % =========================================================================
+    % 2. MAIN LAYER: ELECTRICAL SCHEMATIC SYNTHESIS (100% MANHATTAN ROUTING)
+    % =========================================================================
+
+    % --- Core Transformer Placement ---
+    \node[transformer core] (T) at (2.5, 3.25) {};
+    \node[font=\footnotesize\sffamily\bfseries, below=3pt] at (T.south) {$T_1$};
+    \node[font=\scriptsize\sffamily, above=6pt] at (T.north) {$k_T = \turnsRatio$};
+    \node[solder] at (T.inner dot A1) {};
+    \node[solder] at (T.inner dot B1) {};
+
+    % --- Primary Stage: AC Mains Source & Primary Windings ---
+    % Colinear horizontal routing from terminals to source node coordinates
+    \draw[signal_wire] (T.A1) -- ++(-1.8, 0) coordinate (PRI_TOP);
+    \draw[signal_wire] (T.A2) -- ++(-1.8, 0) coordinate (PRI_BOT);
+    \draw[signal_wire] (PRI_BOT) to[sV, l=$v_{\mathrm{pri}}(t)$] (PRI_TOP);
+
+    % --- Secondary Stage: Secondary Windings & Test Point TP_1 ---
+    \draw[signal_wire] (T.B1) -- ++(2.4, 0) coordinate (SEC_TOP);
+    \draw[signal_wire] (T.B2) -- ++(2.4, 0) coordinate (SEC_BOT);
+
+    % Test Point 1 Anchor, Solder Node & Identifier Tag
+    \coordinate (TP1_NODE) at (4.0, 0 |- T.B1);
+    \node[solder] at (TP1_NODE) {};
+    \node[test_point] (TP1_TAG) at (4.0, 6.8) {$\mathrm{TP}_1$};
+    \node[font=\sffamily\scriptsize\bfseries\color{blue!80!black}, right=6pt] at (TP1_TAG) {$v_{\mathrm{sec}}(t)$};
+
+    % --- Full-Wave Diode Bridge (100% Orthogonal Dual-Leg Architecture) ---
+    % Leg 1: Connected to AC1 (upper secondary line at Y = T.B1)
+    \coordinate (AC1_NODE) at (6.6, 0 |- T.B1);
+    \draw[signal_wire] (SEC_TOP) -- (AC1_NODE) node[solder] {};
+    
+    % Diode D1: Upper Branch of Leg 1 (pointing UP to VRAW rail)
+    \draw (AC1_NODE) to[D, l=$D_1$] (6.6, 5.5) node[solder] {};
+
+    % Diode D3: Lower Branch of Leg 1 (pointing UP from GND rail to AC1)
+    % Positioned strictly below y = 2.0 to ensure zero collision with AC2 line
+    \draw (6.6, 1.0) to[D, l=$D_3$] (6.6, 2.0) -- (AC1_NODE);
+    \node[solder] at (6.6, 1.0) {};
+
+    % Leg 2: Connected to AC2 (lower secondary line at Y = T.B2)
+    \coordinate (AC2_NODE) at (8.6, 0 |- T.B2);
+    % AC2 line crosses Leg 1 vertical wire at (6.6, T.B2) orthogonally without junction dot
+    \draw[signal_wire] (SEC_BOT) -- (AC2_NODE) node[solder] {};
+
+    % Diode D2: Upper Branch of Leg 2 (pointing UP to VRAW rail)
+    \draw (AC2_NODE) to[D, l_=$D_2$] (8.6, 5.5) node[solder] {};
+
+    % Diode D4: Lower Branch of Leg 2 (pointing UP from GND rail to AC2)
+    \draw (8.6, 1.0) to[D, l_=$D_4$] (AC2_NODE);
+    \node[solder] at (8.6, 1.0) {};
+
+    % --- Power Rails: VRAW (+ Rail) & GND (- Return Rail) ---
+    \draw[power_rail] (6.6, 5.5) -- (8.6, 5.5) -- (14.2, 5.5) 
+        node[right, font=\sffamily\bfseries\small] {$V_{\mathrm{RAW}}$};
+    \draw[ground_rail] (6.6, 1.0) -- (8.6, 1.0) -- (14.2, 1.0) 
+        node[right, font=\sffamily\bfseries\small] {$\mathrm{GND}$};
+    \draw (13.8, 1.0) node[ground] {};
+
+    % --- Bulk Filter Capacitor C_filt (Polarized eC Component) ---
+    % Drawn strictly from positive rail (VRAW) to negative rail (GND)
+    \coordinate (C_FILT_TOP) at (10.4, 5.5);
+    \coordinate (C_FILT_BOT) at (10.4, 1.0);
+    \draw (C_FILT_TOP) to[eC, l=$C_{\mathrm{filt}}$, *-*] (C_FILT_BOT);
+
+    % --- Test Point TP_2 on Raw DC Rail ---
+    \coordinate (TP2_NODE) at (11.6, 5.5);
+    \node[solder] at (TP2_NODE) {};
+    \node[test_point] (TP2_TAG) at (11.6, 6.8) {$\mathrm{TP}_2$};
+    \node[font=\sffamily\scriptsize\bfseries\color{red!80!black}, right=6pt] at (TP2_TAG) {$V_{\mathrm{RAW}}$};
+
+    % --- Bleeder Resistor R_bleed ---
+    \coordinate (R_BLEED_TOP) at (12.8, 5.5);
+    \coordinate (R_BLEED_BOT) at (12.8, 1.0);
+    \draw (R_BLEED_TOP) to[R, l=$R_{\mathrm{bleed}}$, *-*] (R_BLEED_BOT);
+
+\end{circuitikz}
+\end{document}

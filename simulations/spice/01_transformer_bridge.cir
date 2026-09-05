@@ -1,0 +1,101 @@
+* =============================================================================
+* TATTO PROJECT — STAGE 1: TRANSFORMER & FULL-WAVE BRIDGE RECTIFIER
+* Netlist Standard: Berkeley SPICE3f5 / NGSPICE Compliant
+* Solver Method: Gear Integration (.options method=gear) with Explicit UIC
+* Node Naming: Biunivocal correspondence with CircuiTikZ TP_1, TP_2, and GND (0)
+* =============================================================================
+
+* --- Parametric Definitions (.param) ---
+.param V_PRI_RMS   = 120.0
+.param Vpeak       = {V_PRI_RMS * sqrt(2.0)}
+.param f_line      = 60.0
+.param N_ratio     = 8.66
+.param C_filt_val  = 18000u
+.param R_bleed_val = 470.0
+.param R_load_val  = 12.0
+
+* Derived Parasitic Elements
+.param L_pri_val   = 10.0
+.param L_sec_val   = {L_pri_val / (N_ratio * N_ratio)}
+.param K_coupling  = 0.9995
+.param R_pri_w     = 0.5
+.param R_sec_w     = 0.05
+.param R_filt_esr  = 0.02
+
+* --- 1. Primary Stage: AC Mains Source & Primary Winding ---
+* AC Source: v_pri(t) = Vpeak * sin(2*pi*f_line*t)
+V_PRI N_PRI_SRC 0 SIN(0 {Vpeak} {f_line} 0 0)
+R_PRI N_PRI_SRC N_PRI_1 {R_pri_w}
+L1    N_PRI_1   0       {L_pri_val}
+
+* --- 2. Secondary Stage: Coupled Inductor Transformer ---
+* Step-down mutual coupling K12
+L2    N_SEC_A   N_SEC_B {L_sec_val}
+K12   L1        L2      {K_coupling}
+R_SEC N_SEC_A   TP_1    {R_sec_w}
+
+* Test Point 1 (TP_1): Upper Secondary AC Terminal
+* Secondary Return Terminal: N_SEC_B (Connected to AC2 input of bridge)
+
+* --- 3. Rectification Stage: Full-Wave Diode Bridge (D1 - D4) ---
+* Model: Silicon Power Rectifier (1N4007 / KBPC equivalent)
+.model D1N4007 D(
++ Is=7.027n
++ Rs=0.03415
++ N=1.802
++ Bv=1000
++ Ibv=0.05u
++ Cjo=10p
++ M=0.333
++ Vj=0.75
++ Tt=5.0u
++ )
+
+* Diode Bridge Topologies:
+* D1: Anode = TP_1, Cathode = TP_2 (Raw DC Rail VRAW)
+* D2: Anode = N_SEC_B, Cathode = TP_2 (Raw DC Rail VRAW)
+* D3: Anode = 0 (GND), Cathode = TP_1
+* D4: Anode = 0 (GND), Cathode = N_SEC_B
+D1 TP_1    TP_2   D1N4007
+D2 N_SEC_B TP_2   D1N4007
+D3 0       TP_1   D1N4007
+D4 0       N_SEC_B D1N4007
+
+* --- 4. Bulk Filtering & Bleeder Stage ---
+* Polarized Electrolytic Capacitor C_filt with modeled series ESR
+C_FILT TP_2   N_CF_ESR {C_filt_val} IC=0.0
+R_ESR  N_CF_ESR 0      {R_filt_esr}
+
+* Bleeder Resistor R_bleed (parallel discharge path)
+R_BLEED TP_2 0 {R_bleed_val}
+
+* Nominal System Test Load R_load
+R_LOAD  TP_2 0 {R_load_val}
+
+* --- 5. Simulation Directives & Solver Controls ---
+* Gear integration algorithm required to eradicate trapezoidal ringing
+.options method=gear reltol=1e-4 gmin=1e-12 abstol=1e-12 vntol=1e-6 chgtol=1e-15 trtol=1
+.tran 10u 40m uic
+
+* --- 6. NGSPICE Control Script & Waveform Export ---
+.control
+  run
+  set color0 = white
+  set color1 = black
+  set color2 = blue
+  set color3 = red
+
+  * Measure Peak Secondary Voltage at TP_1
+  meas tran Vsec_pk MAX v(TP_1) from=20m to=40m
+  * Measure Raw DC Rail Ripple at TP_2
+  meas tran Vraw_max MAX v(TP_2) from=20m to=40m
+  meas tran Vraw_min MIN v(TP_2) from=20m to=40m
+  let V_ripple = Vraw_max - Vraw_min
+  let V_dc_avg = (Vraw_max + Vraw_min) / 2.0
+  print Vsec_pk Vraw_max Vraw_min V_ripple V_dc_avg
+
+  * Output Plot Data
+  plot v(TP_1) v(TP_2) title 'Stage 1: Transformer Secondary and Raw DC Rail'
+.endc
+
+.end

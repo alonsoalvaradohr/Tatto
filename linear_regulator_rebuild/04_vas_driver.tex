@@ -1,0 +1,53 @@
+\documentclass[tikz,border=8mm]{standalone}
+\usepackage[american]{circuitikz}
+
+\begin{document}
+\begin{tikzpicture}[every node/.style={font=\sffamily\small}]
+  % Rails: VRAW y=9; GND y=0.  VAS bus y=6; DRV y=4.
+  \draw (1,9) -- (16,9) node[right] {VRAW};
+  \draw (1,0) -- (16,0) node[right] {GND};
+  \draw (16,0) node[ground] {};
+
+  % VAS load and NPN voltage-amplifier stage.
+  \coordinate (VASnode) at (3,6);
+  \draw (3,9) to[R,l=R4] (VASnode);
+  \node[npn] (Q5) at (3,4) {};
+  \node[left] at (2.1,4.6) {Q5};
+  \draw (Q5.C) -- (VASnode);
+  \draw (Q5.E) to[R,l_=R5] (3,0);
+  \draw (Q5.B) -- ++(-.7,0) node[left] {N2};
+
+  % One VAS bus; all branches are explicit junctions.
+  \draw (VASnode) -- (11,6);
+  \draw (VASnode) node[circ,fill=black,inner sep=1pt] {};
+  \node[above] at (VASnode) {VAS};
+
+  % Miller capacitor: VAS to N2 in its own vertical corridor x=7.
+  \draw (7,6) to[C,l=CC] (7,4);
+  \draw (7,6) node[circ,fill=black,inner sep=1pt] {};
+  \node[right] at (7,4) {N2};
+
+  % Bias chain: VAS -> D5 -> Q6 base -> D6 -> Q7 base.
+  \draw (11,6) to[D,l=D5] (11,5) to[D,l=D6] (11,3);
+  \draw (11,6) node[circ,fill=black,inner sep=1pt] {};
+  \draw (11,5) node[circ,fill=black,inner sep=1pt] {};
+  \draw (11,3) node[circ,fill=black,inner sep=1pt] {};
+
+  % Complementary driver pair; bases use separate horizontal corridors.
+  \node[pnp] (Q6) at (14,5) {};
+  \node[npn] (Q7) at (14,3) {};
+  \node[right] at (14.8,5.45) {Q6};
+  \node[right] at (14.8,2.55) {Q7};
+  \draw (11,5) -- (Q6.B);
+  \draw (11,3) -- (Q7.B);
+  \draw (Q6.E) |- (14,9);
+  \draw (Q7.E) |- (14,0);
+
+  % Only the two collectors meet at DRV.
+  \coordinate (DRVnode) at (16,4);
+  \draw (Q6.C) -| (DRVnode);
+  \draw (Q7.C) -| (DRVnode);
+  \draw (DRVnode) node[circ,fill=black,inner sep=1pt] {};
+  \node[right] at (DRVnode) {DRV};
+\end{tikzpicture}
+\end{document}

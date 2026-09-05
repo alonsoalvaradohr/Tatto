@@ -1,0 +1,140 @@
+% =============================================================================
+% TATTO PROJECT — MODULAR PREAMBLE: CIRCUiTIKZ & GRAPHIC STYLES
+% Standard: IEEE Std 315 / CTAN CircuiTikZ 1.8.5 / CTAN PGF 3.1.10+
+% =============================================================================
+
+% --- CircuiTikZ Global Configuration (Strict IEEE Compliance) ---
+\ctikzset{
+    american,
+    cute inductors,
+    logic ports = ieee,
+    bipoles/thickness = 1.0,
+    bipoles/border margin = 1.1,
+    nodes width = 0.05,
+    inductors/coils = 5,
+    inductors/width = 0.6,
+    capacitors/scale = 0.8,
+    resistors/scale = 0.8,
+    diodes/scale = 0.8,
+    sources/scale = 0.85
+}
+
+% --- Multi-Layer Graphics Architecture (PGF Layers) ---
+\pgfdeclarelayer{chassis}
+\pgfdeclarelayer{background}
+\pgfdeclarelayer{foreground}
+\pgfsetlayers{chassis,background,main,foreground}
+
+% --- Engineering Color Definitions ---
+\definecolor{ScopeDarkBg}{HTML}{1A1D20}
+\definecolor{ScopeFrame}{HTML}{2E3440}
+\definecolor{ScopeGrid}{HTML}{4C566A}
+\definecolor{ScopeTraceYellow}{HTML}{EBCB8B}
+\definecolor{ScopeTraceCyan}{HTML}{88C0D0}
+\definecolor{ScopeTraceGreen}{HTML}{A3BE8C}
+\definecolor{RailVraw}{HTML}{BF616A}
+\definecolor{RailGnd}{HTML}{434C5E}
+\definecolor{TestPointRed}{HTML}{D08770}
+
+\definecolor{ScopeLightFrame}{HTML}{4A5568}
+\definecolor{ScopeLightGrid}{HTML}{E2E8F0}
+\definecolor{ScopeLightAxis}{HTML}{A0AEC0}
+\definecolor{ScopeWaveAC}{HTML}{2B6CB0}
+\definecolor{ScopeWaveDC}{HTML}{C53030}
+
+% --- Layered Styling & Virtual Instrumentation ---
+\tikzset{
+    % Conductor wire classes
+    power_rail/.style = {draw=black, line width=1.1pt},
+    signal_wire/.style = {draw=black, line width=0.7pt},
+    ground_rail/.style = {draw=black, line width=1.1pt},
+    feedback_corridor/.style = {draw=black, line width=0.85pt},
+    scope_wave/.style = {draw=black, line width=1.1pt},
+    %
+    % Solder junctions and connection points
+    solder/.style = {circle, fill=black, inner sep=1.2pt},
+    %
+    % Test Points & Instrumentation Probes
+    test_point/.style = {
+        circle,
+        draw=red!80!black,
+        fill=red!15,
+        inner sep=1.5pt,
+        font={\sffamily\tiny\bfseries},
+        line width=0.7pt
+    },
+    probe_line/.style = {
+        draw=red!70!black,
+        dashed,
+        line width=0.6pt,
+        dash pattern=on 3pt off 2pt
+    },
+    %
+    % Virtual Oscilloscope Display Styles (Background Layer)
+    scope_frame/.style = {
+        draw=black!75,
+        fill=white,
+        rounded corners=3pt,
+        line width=0.85pt
+    },
+    scope_screen/.style = {
+        draw=gray!50,
+        fill=gray!3,
+        rounded corners=2pt,
+        line width=0.5pt
+    },
+    scope_grid/.style = {
+        step=0.2cm,
+        gray!25,
+        very thin
+    },
+    scope_axis/.style = {
+        draw=gray!60,
+        thin
+    },
+    scope_axis_dashed/.style = {
+        draw=gray!50,
+        densely dashed,
+        very thin
+    },
+    scope_wave_ac/.style = {
+        draw=blue!75!black,
+        line width=1.15pt,
+        line cap=round
+    },
+    scope_wave_dc/.style = {
+        draw=red!75!black,
+        line width=1.15pt,
+        line cap=round
+    },
+    scope_annotation/.style = {
+        font={\sffamily\tiny\bfseries},
+        text=black!85
+    },
+    scope_graticule_label/.style = {
+        font={\sffamily\tiny},
+        text=gray!80!black
+    },
+    %
+    % Domain Boundaries & Heat Dissipation Enclosures (Background Layer)
+    domain_mains/.style = {
+        draw=blue!40,
+        fill=blue!5,
+        dashed,
+        rounded corners=4pt,
+        line width=0.6pt
+    },
+    domain_secondary/.style = {
+        draw=green!50!black,
+        fill=green!4,
+        dashed,
+        rounded corners=4pt,
+        line width=0.6pt
+    },
+    chassis_frame/.style = {
+        draw=gray!50,
+        fill=gray!8,
+        rounded corners=6pt,
+        line width=0.8pt
+    }
+}

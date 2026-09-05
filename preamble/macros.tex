@@ -1,0 +1,66 @@
+% =============================================================================
+% TATTO PROJECT — MODULAR PREAMBLE: PARAMETRIC MACROS & SCOPE INSTRUMENTATION
+% Classification: Hardware Synthesis & Documentation Scaffolding
+% =============================================================================
+
+% --- Circuit Variables & Symbolic Quantities (Absolute Agnosticism) ---
+\newcommand{\vprim}{v_{\mathrm{pri}}(t)}
+\newcommand{\vsec}{v_{\mathrm{sec}}(t)}
+\newcommand{\VpriPk}{\hat{V}_{\mathrm{pri}}}
+\newcommand{\VsecPk}{\hat{V}_{\mathrm{sec}}}
+\newcommand{\kturns}{k_T}
+\newcommand{\turnsRatio}{\frac{N_s}{N_p}}
+\newcommand{\fline}{f_{\mathrm{line}}}
+\newcommand{\wline}{\omega_{\mathrm{line}}}
+\newcommand{\cfilt}{C_{\mathrm{filt}}}
+\newcommand{\rbleed}{R_{\mathrm{bleed}}}
+\newcommand{\rload}{R_{\mathrm{load}}}
+\newcommand{\vraw}{V_{\mathrm{RAW}}}
+\newcommand{\vgnd}{\mathrm{GND}}
+\newcommand{\vripple}{\Delta V_{\mathrm{ripple}}}
+\newcommand{\vdiode}{V_D}
+\newcommand{\thetaconduct}{\theta_c}
+\newcommand{\ipeak}{I_{\mathrm{FRM}}}
+\newcommand{\iavg}{I_{\mathrm{load}}}
+
+% --- Test Point Symbols ---
+\newcommand{\tpone}{\mathrm{TP}_1}
+\newcommand{\tptwo}{\mathrm{TP}_2}
+\newcommand{\tpthree}{\mathrm{TP}_3}
+\newcommand{\tpfour}{\mathrm{TP}_4}
+\newcommand{\tpfive}{\mathrm{TP}_5}
+
+% --- Functional Blocks & Stage Identification ---
+\newcommand{\stageTransformer}{Etapa 1: Transformación \& Rectificación}
+\newcommand{\stageReference}{Etapa 2: Referencia \& Error}
+\newcommand{\stageDriver}{Etapa 3: VAS \& Excitación Push-Pull}
+\newcommand{\stagePass}{Etapa 4: Elemento de Paso \& Límite SOA}
+
+% --- Virtual Oscilloscope Instrumentation Macro ---
+% Syntax: \renderScope{x_pos}{y_pos}{width}{height}{title}{testpoint_label}{trace_code}
+\newcommand{\renderScope}[7]{
+    \begin{scope}[shift={(#1,#2)}]
+        % Outer Frame
+        \draw[scope_frame] ({-0.5*#3}, {-0.5*#4}) rectangle ({0.5*#3}, {0.5*#4});
+        
+        % Screen Area
+        \filldraw[scope_screen] ({-0.5*#3+0.15}, {-0.5*#4+0.15}) rectangle ({0.5*#3-0.15}, {0.5*#4-0.15});
+        
+        % Internal Grid Graticule
+        \draw[scope_grid] ({-0.5*#3+0.2}, {-0.5*#4+0.2}) grid ({0.5*#3-0.2}, {0.5*#4-0.2});
+        
+        % Major Axes
+        \draw[scope_axis] ({-0.5*#3+0.2}, 0) -- ({0.5*#3-0.2}, 0);
+        \draw[scope_axis] (0, {-0.5*#4+0.2}) -- (0, {0.5*#4-0.2});
+        
+        % Title & Channel Label
+        \node[scope_annotation, anchor=north west] at ({-0.5*#3+0.25}, {0.5*#4-0.2}) {#5};
+        \node[scope_annotation, anchor=north east, text=red!70!black] at ({0.5*#3-0.25}, {0.5*#4-0.2}) {#6};
+        
+        % Clipped Waveform Trace
+        \begin{scope}
+            \clip ({-0.5*#3+0.2}, {-0.5*#4+0.2}) rectangle ({0.5*#3-0.2}, {0.5*#4-0.2});
+            #7
+        \end{scope}
+    \end{scope}
+}

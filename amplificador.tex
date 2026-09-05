@@ -1,0 +1,79 @@
+\begin{circuitikz}[line width=0.75pt, american, scale=0.9, transform shape]
+    % Rieles de Alimentación
+    \draw[line width=1.1pt] (0,0) -- (16.0,0);
+    \draw (15.5,0) node[ground] {};
+    \node[font=\sffamily\bfseries\scriptsize, below=4pt] at (1.0, 0.0) {$\text{GND}$};
+    \draw[line width=1.1pt] (0,8.5) -- (16.0,8.5) node[right, font=\sffamily\bfseries\scriptsize] {$V_{\text{RAW}}$};
+
+    % Entradas
+    \draw (0.5, 4.0) node[left, font=\sffamily\scriptsize\bfseries] {$V_{\text{ref}}$} to[short, o-] (2.0, 4.0);
+    \draw (0.5, 2.0) node[left, font=\sffamily\scriptsize\bfseries] {$\text{FB}$} to[short, o-] (5.0, 2.0);
+
+    % Par Diferencial de Entrada NPN (Q1, Q2)
+    \node[npn] (Q1) at (2.0, 4.0) {};
+    \node[npn, xscale=-1] (Q2) at (5.0, 4.0) {};
+    \node[font=\sffamily\tiny\bfseries, above left=1pt] at (Q1.B) {$Q_1$};
+    \node[font=\sffamily\tiny\bfseries, above right=1pt] at (Q2.B) {$Q_2$};
+
+    % Conexión Emisores a Fuente de Cola
+    \coordinate (TAIL) at (3.5, 2.7);
+    \draw (Q1.E) |- (TAIL) node[circ, fill=black, inner sep=1.2pt] {} -| (Q2.E);
+    \draw (TAIL) to[isource, l_=$I_{\text{tail}}$, -*] (3.5, 0.0);
+    \draw (5.0, 2.0) |- (Q2.B);
+
+    % Carga Activa: Espejo de Corriente PNP (Q3, Q4)
+    \node[pnp] (Q3) at (2.0, 6.8) {};
+    \node[pnp, xscale=-1] (Q4) at (5.0, 6.8) {};
+    \node[font=\sffamily\tiny\bfseries, below left=2pt] at (Q3.B) {$Q_3$};
+    \node[font=\sffamily\tiny\bfseries, below right=2pt] at (Q4.B) {$Q_4$};
+
+    \draw (Q3.E) -- (Q3.E |- 0, 8.5) node[circ, fill=black, inner sep=1.2pt] {};
+    \draw (Q4.E) -- (Q4.E |- 0, 8.5) node[circ, fill=black, inner sep=1.2pt] {};
+
+    \draw (Q1.C) -- (Q3.C);
+    \draw (Q2.C) -- (Q4.C) coordinate[midway] (N2);
+
+    \draw (Q3.B) -- (Q4.B);
+    \draw (Q3.C) |- (3.5, 6.8) node[circ, fill=black, inner sep=1.2pt] {};
+    \node[circ, fill=black, inner sep=1.2pt] at (Q3.C) {};
+
+    % Etapa VAS y Compensación Miller
+    \node[npn] (Q5) at (8.0, 4.0) {};
+    \node[font=\sffamily\tiny\bfseries, above right=1pt] at (Q5.B) {$Q_5$};
+
+    \coordinate (VAS_IN) at (6.6, 5.4);
+    \draw (N2) node[circ, fill=black, inner sep=1.2pt] {} -- (VAS_IN) |- (Q5.B);
+    \draw (Q5.E) to[R, l_=$R_5$, -*] (Q5.E |- 0, 0.0);
+
+    % Cadena de Polarización de Drivers
+    \coordinate (BIAS_TOP) at (10.0, 7.2);
+    \draw (10.0, 8.5) node[circ, fill=black, inner sep=1.2pt] {} to[R, l=$R_4$] (BIAS_TOP) node[circ, fill=black, inner sep=1.2pt] {};
+
+    \coordinate (BIAS_BOT) at (10.0, 4.8);
+    \draw (BIAS_TOP) to[D, l=$D_5$] (10.0, 6.0) to[D, l=$D_6$] (BIAS_BOT) node[circ, fill=black, inner sep=1.2pt] {};
+
+    \coordinate (VAS_COL_TAP) at (Q5.C |- 0, 5.4);
+    \draw (Q5.C) -- (VAS_COL_TAP) node[circ, fill=black, inner sep=1.2pt] {};
+    \draw (Q5.C |- 0, 4.8) node[circ, fill=black, inner sep=1.2pt] {} -- (BIAS_BOT);
+
+    \draw (VAS_COL_TAP) to[C, l_=$C_c$] (VAS_IN);
+    \node[circ, fill=black, inner sep=1.2pt] at (VAS_IN) {};
+
+    % Driver Push-Pull Clase AB (Q6, Q7)
+    \node[npn] (Q6) at (12.0, 7.2) {};
+    \node[pnp] (Q7) at (12.0, 4.8) {};
+    \node[font=\sffamily\tiny\bfseries, above left=1pt] at (Q6.B) {$Q_6$};
+    \node[font=\sffamily\tiny\bfseries, below left=1pt] at (Q7.B) {$Q_7$};
+
+    \draw (BIAS_TOP) -- (Q6.B);
+    \draw (BIAS_BOT) -- (Q7.B);
+
+    \draw (Q6.C) -- (Q6.C |- 0, 8.5) node[circ, fill=black, inner sep=1.2pt] {};
+    \draw (Q7.C) -- (Q7.C |- 0, 0.0) node[circ, fill=black, inner sep=1.2pt] {};
+
+    \coordinate (DRV) at (14.0, 6.0);
+    \draw (Q6.E) to[R, l=$R_{e1}$] (14.0, 6.43) -- (DRV);
+    \draw (Q7.E) to[R, l_=$R_{e2}$] (14.0, 5.57) -- (DRV);
+    \node[circ, fill=black, inner sep=1.2pt] at (DRV) {};
+    \node[font=\sffamily\tiny\bfseries, above left=1pt] at (DRV) {$\text{DRV}$};
+\end{circuitikz}

@@ -1,0 +1,26 @@
+\documentclass[tikz,border=4pt]{standalone}
+\usepackage[american]{circuitikz}
+\begin{document}
+\begin{circuitikz}[american voltages,every node/.style={font=\sffamily\scriptsize}]
+% Isolated transformer: A1/A2 primary, B1/B2 secondary.
+\node[transformer core] (T1) at (2.8,4.5) {};
+\draw (0.6,1) to[sV,l=VAC] (0.6,7);
+\draw (0.6,7)--(T1.A1);
+\draw (0.6,1)|-(T1.A2);
+\node[below] at (2.8,2.6) {T1};
+\coordinate (AC1) at (5.4,6.5);
+\coordinate (AC2) at (5.4,2.5);
+\draw (T1.B1)--(AC1) node[circ,fill=black,inner sep=.9pt]{};
+\draw (T1.B2)--(AC2) node[circ,fill=black,inner sep=.9pt]{};
+% Correct bridge: D1,D2 anodes on AC; D3,D4 cathodes on AC.
+\coordinate (VRAW) at (12,8);
+\coordinate (GND) at (12,1);
+\draw (AC1)--(8,6.5) to[D,l=D1] (9.5,6.5) |- (VRAW) node[circ,fill=black,inner sep=.9pt]{};
+\draw (AC2)--(8,2.5) to[D,l=D2] (10.5,2.5) |- (VRAW);
+\draw (GND)--(10,1) to[D,l_=D3] (7,1) |- (AC1);
+\draw (GND)--(11,1) to[D,l_=D4] (6,1) |- (AC2);
+\draw (VRAW)--(14,8) node[right]{VRAW};
+\draw (GND)--(14,1) node[right]{GND};
+\draw (13,8) to[C,l=C1] (13,1);
+\end{circuitikz}
+\end{document}

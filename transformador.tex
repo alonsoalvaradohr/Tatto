@@ -1,0 +1,48 @@
+\begin{circuitikz}[line width=0.75pt, american, scale=0.9, transform shape]
+    % Rieles de Potencia
+    \draw[line width=1.1pt] (0,0) -- (14.0,0);
+    \draw (13.5,0) node[ground] {};
+    \node[font=\sffamily\bfseries\scriptsize, below=4pt] at (2.0, 0.0) {$\text{GND}$};
+    \draw[line width=1.1pt] (9.5,6.0) -- (14.0,6.0) node[right, font=\sffamily\bfseries\scriptsize] {$V_{\text{RAW}}$};
+
+    % Transformador
+    \node[transformer core] (T) at (3.0,3.0) {};
+    \node[font=\sffamily\scriptsize\bfseries, below=2pt] at (T.base) {$T_1$};
+
+    % Entrada AC
+    \draw (1.0, 0 |- T.A2) to[sV, l=$v_{\text{AC}}$] (1.0, 0 |- T.A1);
+    \draw (1.0, 0 |- T.A1) -- (T.A1);
+    \draw (1.0, 0 |- T.A2) -- (T.A2);
+
+    % Secundario
+    \coordinate (VAC1) at (4.8, 0 |- T.B1);
+    \coordinate (VAC2) at (4.8, 0 |- T.B2);
+    \draw (T.B1) -- (VAC1) node[circ, fill=black, inner sep=1.2pt] {};
+    \draw (T.B2) -- (VAC2) node[circ, fill=black, inner sep=1.2pt] {};
+
+    % Puente en Diamante Planar
+    \coordinate (BR_AC1) at (7.8, 4.5);
+    \coordinate (BR_AC2) at (7.8, 1.5);
+    \coordinate (BR_GND) at (6.3, 3.0);
+    \coordinate (BR_VRAW) at (9.3, 3.0);
+
+    \draw (VAC1) -- (5.6, 0 |- VAC1) |- (BR_AC1);
+    \draw (VAC2) -- (5.6, 0 |- VAC2) |- (BR_AC2);
+
+    \draw (BR_AC1) to[D, l=$D_1$] (BR_VRAW);
+    \draw (BR_AC2) to[D, l_=$D_2$] (BR_VRAW);
+    \draw (BR_GND) to[D, l=$D_3$] (BR_AC1);
+    \draw (BR_GND) to[D, l_=$D_4$] (BR_AC2);
+
+    \node[circ, fill=black, inner sep=1.2pt] at (BR_AC1) {};
+    \node[circ, fill=black, inner sep=1.2pt] at (BR_AC2) {};
+    \node[circ, fill=black, inner sep=1.2pt] at (BR_GND) {};
+    \node[circ, fill=black, inner sep=1.2pt] at (BR_VRAW) {};
+
+    \draw (BR_GND) -- (6.3, 0.0) node[circ, fill=black, inner sep=1.2pt] {};
+    \draw (BR_VRAW) -- (9.5, 3.0) -- (9.5, 6.0) node[circ, fill=black, inner sep=1.2pt] {};
+
+    % Filtro Capacitivo
+    \draw (11.5, 6.0) to[eC, l=$C_{\text{bulk}}$, *-*] (11.5, 0.0);
+    \draw (13.0, 6.0) to[C, l=$C_{\text{in}}$, *-*] (13.0, 0.0);
+\end{circuitikz}
