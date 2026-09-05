@@ -3,4 +3,7 @@
 *.synctex.gz
 *.fls
 *.fdb_latexmk
+*.toc
+*.lof
+*.out
 .history/

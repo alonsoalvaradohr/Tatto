@@ -1,0 +1,45 @@
+% =============================================================================
+% TATTO PROJECT — APÉNDICE A: GEMELOS DIGITALES Y MODELOS DE SIMULACIÓN
+% Standard: IEEE Std 315 / 2026 Multi-Agent Standard / CTAN embedfile
+% =============================================================================
+
+\chapter{Gemelos Digitales y Modelos Computacionales Embebidos}
+\label{ch:appendices_digital_twins}
+
+\section{Incrustación Física de Artefactos de Simulación}
+En estricto cumplimiento de la reproducibilidad científica y las directrices del proyecto, el presente documento PDF contiene embebidos en su estructura interna (árbol de objetos binarios ISO 32000-1) los códigos fuente primarios de simulación:
+
+\begin{enumerate}
+    \item \textbf{Netlist SPICE Agnóstico Monolítico:} \texttt{master\_integrated\_system.cir}
+    \item \textbf{Modelo Dinámico MATLAB Simscape Electrical (DAE rígido ode23t):} \texttt{simscape\_integrated\_system.m}
+    \item \textbf{Testbench de Validación Experimental 120\,V AC a 12\,V DC:} \texttt{testbench\_120v\_to\_12v.cir}
+\end{enumerate}
+
+% --- Embedding of Source Artifacts into PDF Object Stream (Pure ASCII Descriptions) ---
+\embedfile[
+    desc={Netlist SPICE del Sistema Integrado Maestro (Parametrizacion Agnostica, Integracion Gear)},
+    filespec={master_integrated_system.cir}
+]{simulations/spice/master_integrated_system.cir}
+
+\embedfile[
+    desc={Modelo Dinamico MATLAB Simscape Electrical (Solver ode23t, Dinamica No Lineal Rigida)},
+    filespec={simscape_integrated_system.m}
+]{simulations/matlab/simscape_integrated_system.m}
+
+\embedfile[
+    desc={Testbench Experimental SPICE 120V AC a 12V DC (Prueba Dinamica de Carga 1.2A)},
+    filespec={testbench_120v_to_12v.cir}
+]{simulations/spice/testbench_120v_to_12v.cir}
+
+\section{Instrucciones de Extracción y Ejecución}
+Los modelos pueden extraerse directamente desde el panel de adjuntos de cualquier visor PDF estándar:
+\begin{itemize}
+    \item \textbf{NGSPICE / Berkeley SPICE:}
+    \begin{verbatim}
+    ngspice master_integrated_system.cir
+    \end{verbatim}
+    \item \textbf{MATLAB (R2024b+ / Simscape):}
+    \begin{verbatim}
+    run('simscape_integrated_system.m')
+    \end{verbatim}
+\end{itemize}

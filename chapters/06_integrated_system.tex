@@ -46,7 +46,9 @@
     scope_wave/.style = {draw=black, line width=1.1pt}
 }
 
-% --- Robust Path Resolution for Assets ---
+\begin{document}
+
+% --- Robust Path Resolution for Assets (Inside Document Body for Standalone Ingestion) ---
 \IfFileExists{figures/tikz/master_integrated_system.tex}{%
     \def\MasterTikzPath{figures/tikz/master_integrated_system}%
     \def\SimscapePlotPath{simulations/matlab/integrated_system_response.png}%
@@ -54,8 +56,6 @@
     \def\MasterTikzPath{../figures/tikz/master_integrated_system}%
     \def\SimscapePlotPath{../simulations/matlab/integrated_system_response.png}%
 }
-
-\begin{document}
 
 % =============================================================================
 % CAPÍTULO 06: SISTEMA INTEGRADO: SÍNTESIS TOPOLÓGICA Y VALIDACIÓN DE SILICIO
@@ -280,13 +280,13 @@ La Tabla~\ref{tab:cross_validation_metrics} sintetiza las métricas clave de des
 \toprule
 \textbf{Métrica de Rendimiento} & \textbf{Modelo Analítico} & \textbf{SPICE (\texttt{.cir})} & \textbf{Simscape (\texttt{.m})} & \textbf{Desviación Máx.} \\
 \midrule
-Tensión de Salida en Reposo $V_{o,\mathrm{nom}}$ & $12.00\,\mathrm{V}$ & $12.04\,\mathrm{V}$ & $12.02\,\mathrm{V}$ & $< 0.35\%$ \\
-Rizado de Salida $\Delta V_{o,\mathrm{ripple}}$ & $1.20\,\mathrm{mV}_{\mathrm{p-p}}$ & $1.15\,\mathrm{mV}_{\mathrm{p-p}}$ & $1.18\,\mathrm{mV}_{\mathrm{p-p}}$ & $< 4.1\%$ \\
-Regulación de Línea ($\Delta V_o / \Delta V_{\mathrm{pri}}$) & $0.015\,\%/\mathrm{V}$ & $0.018\,\%/\mathrm{V}$ & $0.016\,\%/\mathrm{V}$ & $< 0.003\,\%/\mathrm{V}$ \\
-Regulación de Carga ($\Delta V_o / \Delta I_L$) & $8.5\,\mathrm{mV}/\mathrm{A}$ & $9.2\,\mathrm{mV}/\mathrm{A}$ & $8.9\,\mathrm{mV}/\mathrm{A}$ & $< 7.8\%$ \\
-Frecuencia de Cruce $f_{0\mathrm{dB}}$ & $45.2\,\mathrm{kHz}$ & $43.8\,\mathrm{kHz}$ & $44.5\,\mathrm{kHz}$ & $< 3.1\%$ \\
-Margen de Fase $\Phi_m$ & $68.5^\circ$ & $65.2^\circ$ & $66.8^\circ$ & $< 4.8\%$ \\
-Umbral de Sobrecorriente $I_{\mathrm{limit}}$ & $1.82\,\mathrm{A}$ & $1.85\,\mathrm{A}$ & $1.83\,\mathrm{A}$ & $< 1.7\%$ \\
+Tensión de Salida en Reposo $V_{o,\mathrm{nom}}$ & $12.00\,\mathrm{V}$ & $12.04\,\mathrm{V}$ & $12.02\,\mathrm{V}$ & $< 0.35\text{\%}$ \\
+Rizado de Salida $\Delta V_{o,\mathrm{ripple}}$ & $1.20\,\mathrm{mV}_{\mathrm{p-p}}$ & $1.15\,\mathrm{mV}_{\mathrm{p-p}}$ & $1.18\,\mathrm{mV}_{\mathrm{p-p}}$ & $< 4.1\text{\%}$ \\
+Regulación de Línea ($\Delta V_o / \Delta V_{\mathrm{pri}}$) & $0.015\text{ \%}/\mathrm{V}$ & $0.018\text{ \%}/\mathrm{V}$ & $0.016\text{ \%}/\mathrm{V}$ & $< 0.003\text{ \%}/\mathrm{V}$ \\
+Regulación de Carga ($\Delta V_o / \Delta I_L$) & $8.5\,\mathrm{mV}/\mathrm{A}$ & $9.2\,\mathrm{mV}/\mathrm{A}$ & $8.9\,\mathrm{mV}/\mathrm{A}$ & $< 7.8\text{\%}$ \\
+Frecuencia de Cruce $f_{0\mathrm{dB}}$ & $45.2\,\mathrm{kHz}$ & $43.8\,\mathrm{kHz}$ & $44.5\,\mathrm{kHz}$ & $< 3.1\text{\%}$ \\
+Margen de Fase $\Phi_m$ & $68.5^\circ$ & $65.2^\circ$ & $66.8^\circ$ & $< 4.8\text{\%}$ \\
+Umbral de Sobrecorriente $I_{\mathrm{limit}}$ & $1.82\,\mathrm{A}$ & $1.85\,\mathrm{A}$ & $1.83\,\mathrm{A}$ & $< 1.7\text{\%}$ \\
 \bottomrule
 \end{tabular}
 \caption{Matriz de Correlación y Validación Cruzada entre Modelos Analíticos y Gemelos Numéricos.}

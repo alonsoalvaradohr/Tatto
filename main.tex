@@ -1,65 +1,120 @@
-\documentclass[11pt,a4paper]{article}
-\usepackage[utf8]{inputenc}
-\usepackage[T1]{fontenc}
+\documentclass[11pt,a4paper,titlepage,oneside]{book}
+
+% =============================================================================
+% TATTO PROJECT — MASTER TECHNICAL DOSSIER (2026 MULTI-AGENT STANDARD)
+% Standard: IEEE Std 315 / IEEE 91/91a / CTAN CircuiTikZ 1.8.5
+% Document: Master Monograph & Silicon Architecture Dossier
+% Engine: LuaLaTeX (LuaHBTeX / TeX Live 2025/2026)
+% =============================================================================
+
+% --- Regional Language & Typography ---
 \usepackage[spanish,es-tabla]{babel}
-\usepackage{lmodern}
+
+% --- Page Geometry & Margins ---
 \usepackage{geometry}
-\geometry{margin=2cm}
-
-\usepackage{amsmath}
-\usepackage{amssymb}
-\usepackage{siunitx}
-\usepackage{graphicx}
-\usepackage{xcolor}
-\usepackage{tikz}
-\usepackage[american, cute inductors, american currents, american voltages]{circuitikz}
-
-\usetikzlibrary{calc, positioning, backgrounds}
-
-\ctikzset{
-    logic ports=ieee,
-    resistors/scale=0.70,
-    capacitors/scale=0.65,
-    diodes/scale=0.65,
-    transistors/scale=0.80,
-    sources/scale=0.70,
-    bipoles/thickness=1.0,
-    nodes width=0.055
+\geometry{
+    a4paper,
+    top=25mm,
+    bottom=25mm,
+    left=25mm,
+    right=25mm,
+    footskip=12mm
 }
 
-\title{\textbf{Proyecto Tatto: Fuente Lineal Regulada}\\
-\large Arquitectura Topológica Multinivel y Análisis de Señal}
-\author{\textbf{Enjambre de Arquitectura y QA Electrónico}}
+% --- Modular Preambles Ingestion ---
+\input{preamble/packages.tex}
+\input{preamble/circuitikz_styles.tex}
+\input{preamble/macros.tex}
+
+% --- ISO 32000-1 Digital Twin File Embedding ---
+\usepackage{embedfile}
+
+% --- Typesetting Hygiene & Tolerances (KB-TATTO-002 §6.1) ---
+\emergencystretch 3em
+\hfuzz 1.0pt
+\vfuzz 1.0pt
+\hbadness 2000
+\vbadness 2000
+
+% --- Abstract Environment Definition for Book Class ---
+\newenvironment{abstract}{%
+    \begin{quotation}\small\noindent\textbf{\abstractname.---}\ignorespaces
+}{%
+    \end{quotation}\par\bigskip
+}
+
+% --- Hyperlinks, Bookmarks & PDF Metadata ---
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks = true,
+    linkcolor = black,
+    citecolor = black,
+    urlcolor = blue!70!black,
+    pdftitle = {Proyecto Tatto: Fuente de Alimentación Lineal Regulada Discreta},
+    pdfauthor = {Enjambre de Arquitectura y QA Electrónico (2026 Standard)},
+    pdfsubject = {Síntesis Topológica de Silicio Bare-Metal, Modelado Analítico y Validación Computacional},
+    pdfkeywords = {Linear Power Supply, Discrete Silicon, BJT, Miller Compensation, SPICE, Simscape, IEEE Std 315}
+}
+\usepackage{cleveref}
+
+% =============================================================================
+% FRONTMATTER METADATA
+% =============================================================================
+\title{%
+    \vspace{-1.5cm}
+    \textbf{\huge Proyecto Tatto: Fuente de Alimentación Lineal Regulada Discreta}\\[0.6cm]
+    \Large Síntesis Topológica de Silicio Bare-Metal, Modelado Analítico y Validación Computacional
+}
+
+\author{%
+    \textbf{Enjambre de Arquitectura y QA Electrónico (2026 Standard)}\\[0.2cm]
+    \textit{Consorcio Multi-Agente de Diseño Hardware \& Validación Formal}
+}
+
 \date{\today}
 
 \begin{document}
 
+\frontmatter
+
+% --- Title Page ---
 \maketitle
 
+% --- Document-Level Abstract ---
 \begin{abstract}
-Este documento presenta el diseño unificado y la síntesis topológica de una Fuente de Alimentación Lineal Regulada de precisión, estructurada en tres niveles jerárquicos de abstracción: Nivel Macro (conversión y potencia), Nivel Silicio (regulador serie con protección de sobrecorriente) y Nivel Transistor (amplificador de error discreto con par diferencial, espejo de corriente, VAS con compensación Miller y driver Push-Pull Clase AB). Asimismo, se incluye la capa analítica de instrumentación virtual superpuesta en tiempo real.
+Este dossier técnico presenta la formalización matemática, la síntesis topológica de silicio discreto y la validación computacional gemela de una Fuente de Alimentación Lineal Regulada de alta precisión, desarrollada bajo el Estándar Multi-Agente 2026 y las normativas IEEE Std 315 / IEEE 91/91a. La arquitectura está concebida íntegramente a nivel de semiconductores bipolares discretos (100\% BJT, prescindiendo por completo de circuitos integrados operacionales o macromodelos híbridos), garantizando una correspondencia física biunívoca con las leyes de la física del estado sólido.
+
+El diseño se estructura de forma modular en cinco etapas de acondicionamiento y control continuo:
+\begin{enumerate}
+    \item \textbf{Conversión de Red y Filtrado No Regulado (Nivel Macro):} Transformación galvánica reductora ($k_T = N_s/N_p$), rectificación simétrica de onda completa mediante puente de diodos discretos ($D_1$--$D_4$) y banco capacitivo de suavizado pasivo $C_{\mathrm{filt}}$ con resistor de descarga segura $R_{\mathrm{bleed}}$, estableciendo la barra de potencial bruto $V_{\mathrm{RAW}}$.
+    \item \textbf{Generación de Tensión de Referencia Zener:} Estabilización mediante diodo zener pasivo polarizado por resistencia $R_{\mathrm{bias}}$, fijando una tensión de referencia $V_{\mathrm{ref}}$ insensible a fluctuaciones de rizado residual.
+    \item \textbf{Amplificador de Error Diferencial con Carga Activa:} Par diferencial balanceado BJT NPN ($Q_1, Q_2$) polarizado por fuente de corriente de cola $I_{\mathrm{tail}}$ y acoplado a un espejo de corriente activo PNP ($Q_3, Q_4$), obteniendo una alta ganancia diferencial y elevado rechazo al modo común (CMRR).
+    \item \textbf{Etapa Amplificadora de Tensión (VAS) y Driver Darlington:} Etapa de alta ganancia $Q_5$ con resistencia de degeneración de emisor $R_E$, compensación de frecuencia por polo dominante Miller ($C_c$) que produce el desdoblamiento analítico de polos (\textit{pole-splitting}), acoplada al par Darlington de salida ($Q_{\mathrm{drv}}, Q_{\mathrm{pass}}$).
+    \item \textbf{Elemento Serie de Potencia, Protección $V_{BE}$ y Lazo Cerrado:} Transistor de paso de potencia $Q_{\mathrm{pass}}$ operando en modo activo directo, supervisado por un limitador dinámico ultrarrápido de sobrecorriente por censado $V_{BE}$ ($Q_{\mathrm{lim}}, R_{\mathrm{sc}}$), cerrando el lazo con una red resistiva y estabilizado por el condensador de salida $C_{\mathrm{out}}$.
+\end{enumerate}
+
+La integridad del diseño se valida experimentalmente mediante gemelos digitales biunívocos implementados en SPICE3f5/NGSPICE (\texttt{.cir}, integración Gear) y MATLAB Simscape Electrical (\texttt{.m}, solver diferencial rígido \texttt{ode23t}), garantizando márgenes de fase $\Phi_m \ge 60^\circ$ y márgenes de ganancia $G_m \ge 12\,\mathrm{dB}$.
 \end{abstract}
 
-\section{Esquemático Maestro Unificado}
-El diagrama general multinivel unifica todas las etapas en un solo plano ortogonal sin colisiones espaciales:
+% --- Table of Contents & List of Figures ---
+\tableofcontents
+\listoffigures
+\cleardoublepage
 
-\begin{center}
-    \includegraphics[width=\textwidth]{circuito.pdf}
-\end{center}
+% =============================================================================
+% MAINMATTER: CORE CHAPTERS
+% =============================================================================
+\mainmatter
 
-\section{Sistema de Potencia y Transformación (Nivel Macro)}
-\begin{center}
-    \input{transformador.tex}
-\end{center}
+% --- Chapter 06: Integrated System, Closed-Loop Stability & Digital Twins ---
+\input{chapters/06_integrated_system.tex}
 
-\section{Etapa de Regulación Lineal (Nivel Silicio)}
-\begin{center}
-    \input{regulador.tex}
-\end{center}
+% =============================================================================
+% BACKMATTER: APPENDICES & EMBEDDED DIGITAL TWIN SOURCE ARTIFACTS
+% =============================================================================
+\appendix
 
-\section{Amplificador de Error Discreto (Nivel Transistor)}
-\begin{center}
-    \input{amplificador.tex}
-\end{center}
+% --- Appendix A: Embedded Digital Twin Models ---
+\input{appendices/A_digital_twins.tex}
 
 \end{document}
