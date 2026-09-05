@@ -27,7 +27,7 @@
 % --- Global CircuiTikZ IEEE Configuration (Rule D) ---
 \ctikzset{
     logic ports = ieee,
-    bipoles/thickness = 1.0,
+    bipoles/thickness = 1.5,
     bipoles/border margin = 1.1,
     nodes width = 0.05,
     inductors/coils = 5,
@@ -41,11 +41,11 @@
 
 % --- Strict Monochrome Styles (Rule A) ---
 \tikzset{
-    power_rail/.style = {draw=black, line width=1.1pt},
-    ground_rail/.style = {draw=black, line width=1.1pt},
-    signal_wire/.style = {draw=black, line width=0.7pt},
-    feedback_corridor/.style = {draw=black, line width=0.85pt},
-    probe_line/.style = {draw=black, dashed, line width=0.6pt},
+    power_rail/.style = {draw=black, line width=1.6pt},
+    ground_rail/.style = {draw=black, line width=1.6pt},
+    signal_wire/.style = {draw=black, line width=1.2pt},
+    feedback_corridor/.style = {draw=black, line width=1.3pt},
+    probe_line/.style = {draw=black, dashed, line width=1.0pt},
     scope_frame/.style = {draw=black, fill=white, rounded corners=2pt, line width=0.8pt},
     scope_grid/.style = {step=0.2cm, black!18, very thin},
     scope_axis/.style = {draw=black!45, thin},
@@ -53,7 +53,7 @@
 }
 
 \begin{document}
-\begin{circuitikz}[american, line width=0.75pt]
+\begin{circuitikz}[american, line width=1.2pt]
 
     % =========================================================================
     % 1. BACKGROUND LAYER: VIRTUAL OSCILLOSCOPE INSTRUMENTATION
@@ -67,7 +67,7 @@
                 \draw[scope_grid] (-1.0, -0.7) grid (1.0, 0.7);
                 \draw[scope_axis] (-1.0, 0) -- (1.0, 0);
                 \draw[scope_axis] (0, -0.7) -- (0, 0.7);
-                \node[anchor=south west, inner sep=1.5pt] at (-1.0, 0.72) {#3};
+                \node[anchor=south west, inner sep=1pt, yshift=6pt, xshift=-2pt] at (-1.15, 0.85) {#3};
                 \begin{scope}
                     \clip (-1.0, -0.7) rectangle (1.0, 0.7);
                     #4
@@ -173,8 +173,8 @@
     % NPN Differential Pair Transistors
     \node[npn] (Q1) at (17.0, 4.0) {};
     \node[npn, xscale=-1] (Q2) at (20.5, 4.0) {};
-    \node[above left=2pt] at (Q1.center) {$Q_1$};
-    \node[above right=2pt] at (Q2.center) {$Q_2$};
+    \node[above left=8pt] at (Q1.center) {$Q_1$};
+    \node[above right=8pt] at (Q2.center) {$Q_2$};
 
     % Direct connection from Reference Node to Non-Inverting Base of Q1
     \draw[signal_wire] (VREF) -- (Q1.B);
@@ -187,8 +187,8 @@
     % Active PNP Current Mirror Load
     \node[pnp, xscale=-1] (Q3) at (17.0, 6.6) {};
     \node[pnp] (Q4) at (20.5, 6.6) {};
-    \node[above left=2pt] at (Q3.center) {$Q_3$};
-    \node[above right=2pt] at (Q4.center) {$Q_4$};
+    \node[above left=8pt] at (Q3.center) {$Q_3$};
+    \node[above right=8pt] at (Q4.center) {$Q_4$};
 
     % Mirror Emitter Connections to V_raw Rail (Colinear Verticals)
     \draw[signal_wire] (Q3.E) -- (17.0, 8.0) node[circ] {};
@@ -212,7 +212,7 @@
 
     % High-Gain NPN Transistor
     \node[npn] (Q5) at (24.5, 4.6) {};
-    \node[above right=2pt] at (Q5.center) {$Q_5$};
+    \node[above right=8pt] at (Q5.center) {$Q_5$};
 
     % Drive from Error Amplifier Output Node N2 into Q5 Base (100% Orthogonal)
     \coordinate (N_BASE5) at (22.5, 4.6);
@@ -239,14 +239,14 @@
 
     % Current Limit Transistor Q_limit (NPN)
     \node[npn, xscale=-1] (Qlim) at (27.5, 4.2) {};
-    \node[left=3pt] at (Qlim.center) {$Q_{limit}$};
+    \node[left=10pt] at (Qlim.center) {$Q_{limit}$};
 
     % Collector pulling down DRV Node (100% Colinear Vertical)
     \draw[signal_wire] (Qlim.C) -- (DRV);
 
     % Driver Transistor Q_drv (NPN, First Half of Darlington Pair)
     \node[npn] (Qdrv) at (30.5, 6.5) {};
-    \node[above left=2pt] at (Qdrv.center) {$Q_{drv}$};
+    \node[above left=8pt] at (Qdrv.center) {$Q_{drv}$};
 
     % DRV node into Q_drv Base
     \draw[signal_wire] (DRV) -- (Qdrv.B);
@@ -256,7 +256,7 @@
 
     % Power Pass NPN Transistor Q_pass (Main Output Pass BJT)
     \node[npn] (Qpass) at (34.0, 6.5) {};
-    \node[above left=2pt] at (Qpass.center) {$Q_{pass}$};
+    \node[above left=8pt] at (Qpass.center) {$Q_{pass}$};
 
     % Collector of Q_pass to V_raw Rail
     \draw[signal_wire] (Qpass.C) -- (34.0, 8.0) node[circ] {};
@@ -305,7 +305,7 @@
         \draw[probe_line] (1.0, 10.35) -- (1.0, 0 |- T1.A1) node[circ] {};
         \draw[probe_line] (4.5, 10.35) -- (4.5, 0 |- T1.B1);
         \draw[probe_line] (10.0, 10.35) -- (10.0, 8.0) node[circ] {};
-        \draw[probe_line] (14.5, 10.35) -- (14.5, 4.0);
+        \draw[probe_line] (14.0, 10.35) -- (14.0, 9.2) -- (15.5, 9.2) -- (15.5, 4.0) node[circ] {};
         \draw[probe_line] (46.5, 10.35) -- (46.5, 0 |- Qpass.E) node[circ] {};
     \end{pgfonlayer}
 
