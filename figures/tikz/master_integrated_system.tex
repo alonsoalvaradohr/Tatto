@@ -109,6 +109,13 @@
     \end{pgfonlayer}
 
     % =========================================================================
+    % STAGE TRANSFER FUNCTIONS (Analytic Closed-Form Equations)
+    % =========================================================================
+    \node[font=\scriptsize\sffamily, anchor=east] at (9.4, 9.8) {$V_{raw} \approx \hat{v}_{sec} - 2V_D - \frac{I_{load}}{2 f C_{filt}}$};
+    \node[font=\scriptsize\sffamily, anchor=east] at (13.0, 9.8) {$V_{ref} = V_Z$};
+    \node[font=\scriptsize\sffamily, align=center] at (34.0, 9.8) {$v_o = V_{ref} \left(1 + \frac{R_1}{R_2}\right)$};
+
+    % =========================================================================
     % 2. MAIN RAILS: RAW DC AND SYSTEM GROUND
     % =========================================================================
 
@@ -118,14 +125,14 @@
 
     % Lower System Return Ground Rail: Continuous across secondary domain
     \draw[ground_rail] (5.5, 0.0) -- (48.0, 0.0);
-    \node[ground, thick] at (47.5, 0.0) {};
+    \node[ground, thick, line width=1.2pt] at (47.5, 0.0) {};
 
     % =========================================================================
     % STAGE 1: POWER (AC Source, Transformer, Diode Bridge, Filter, Bleeder)
     % =========================================================================
 
     % Core Transformer Placement
-    \node[transformer core, thick] (T1) at (3.0, 4.0) {};
+    \node[transformer core, thick, line width=1.2pt] (T1) at (3.0, 4.0) {};
     \node[below=4pt] at (T1.south) {$T_1$};
     \node[above=4pt] at (T1.north) {$k_T = \frac{N_s}{N_p}$};
     \node[circ] at (T1.inner dot A1) {};
@@ -176,8 +183,8 @@
     % =========================================================================
 
     % NPN Differential Pair Transistors
-    \node[npn, thick] (Q1) at (17.0, 4.0) {};
-    \node[npn, xscale=-1, thick] (Q2) at (20.5, 4.0) {};
+    \node[npn, thick, line width=1.2pt] (Q1) at (17.0, 4.0) {};
+    \node[npn, xscale=-1, thick, line width=1.2pt] (Q2) at (20.5, 4.0) {};
     \node[above left=8pt] at (Q1.center) {$Q_1$};
     \node[above right=8pt] at (Q2.center) {$Q_2$};
 
@@ -190,8 +197,8 @@
     \draw[signal_wire] (TAIL) to[isource, l_=$I_{tail}$] (18.75, 0.0) node[circ] {};
 
     % Active PNP Current Mirror Load
-    \node[pnp, xscale=-1, thick] (Q3) at (17.0, 6.6) {};
-    \node[pnp, thick] (Q4) at (20.5, 6.6) {};
+    \node[pnp, xscale=-1, thick, line width=1.2pt] (Q3) at (17.0, 6.6) {};
+    \node[pnp, thick, line width=1.2pt] (Q4) at (20.5, 6.6) {};
     \node[above left=8pt] at (Q3.center) {$Q_3$};
     \node[above right=8pt] at (Q4.center) {$Q_4$};
 
@@ -216,12 +223,14 @@
     % =========================================================================
 
     % High-Gain NPN Transistor
-    \node[npn, thick] (Q5) at (24.5, 4.6) {};
+    \node[npn, thick, line width=1.2pt] (Q5) at (24.5, 4.6) {};
     \node[above right=8pt] at (Q5.center) {$Q_5$};
 
     % Drive from Error Amplifier Output Node N2 into Q5 Base (100% Orthogonal)
     \coordinate (N_BASE5) at (22.5, 4.6);
-    \draw[signal_wire] (N2) -- (22.5, 5.3) -- (N_BASE5) node[circ] {} -- (Q5.B);
+    \draw[signal_wire] (N2) -- (21.5, 5.3) -- (21.5, 4.6) -- (N_BASE5);
+    \draw[signal_wire] (N_BASE5) -- (Q5.B);
+    \node[circ] at (N_BASE5) {};
 
     % Emitter Degeneration Resistor R_E to Ground Rail
     \draw[signal_wire] (Q5.E) to[R, l_=$R_E$] (24.5, 2.2) -- (24.5, 0.0) node[circ] {};
@@ -243,14 +252,14 @@
     \draw[signal_wire] (VAS_OUT) -- (DRV) node[circ] {};
 
     % Current Limit Transistor Q_limit (NPN)
-    \node[npn, xscale=-1, thick] (Qlim) at (27.5, 4.2) {};
+    \node[npn, xscale=-1, thick, line width=1.2pt] (Qlim) at (27.5, 4.2) {};
     \node[left=10pt] at (Qlim.center) {$Q_{limit}$};
 
     % Collector pulling down DRV Node (100% Colinear Vertical)
     \draw[signal_wire] (Qlim.C) -- (DRV);
 
     % Driver Transistor Q_drv (NPN, First Half of Darlington Pair)
-    \node[npn, thick] (Qdrv) at (30.5, 6.5) {};
+    \node[npn, thick, line width=1.2pt] (Qdrv) at (30.5, 6.5) {};
     \node[above left=8pt] at (Qdrv.center) {$Q_{drv}$};
 
     % DRV node into Q_drv Base
@@ -260,7 +269,7 @@
     \draw[signal_wire] (Qdrv.C) -- (30.5, 8.0) node[circ] {};
 
     % Power Pass NPN Transistor Q_pass (Main Output Pass BJT)
-    \node[npn, thick] (Qpass) at (34.0, 6.5) {};
+    \node[npn, thick, line width=1.2pt] (Qpass) at (34.0, 6.5) {};
     \node[above left=8pt] at (Qpass.center) {$Q_{pass}$};
 
     % Collector of Q_pass to V_raw Rail
