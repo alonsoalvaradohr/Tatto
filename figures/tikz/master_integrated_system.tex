@@ -5,6 +5,7 @@
 % Standard: IEEE Std 315 / CTAN CircuiTikZ / CTAN PGF
 % Architecture: Monolithic Discrete E2E Linear Regulated Power Supply
 % Topology: Pure Discrete Silicon (100% BJT, 0% Op-Amps / Macros)
+%           Enhanced Darlington Pass Stage (Q_drv + Q_pass)
 % Constraints: 100% Monochrome (Rule A), 100% Pure Math Symbols (Rule B),
 %              100% Manhattan Orthogonal (Rule C), IEEE Standards (Rule D)
 % =============================================================================
@@ -85,18 +86,18 @@
         }
 
         % Scope 3: Unregulated Smoothed DC with Ripple (Probing V_raw)
-        \scopeDisplay{10.5}{11.2}{$V_{raw}$}{
+        \scopeDisplay{10.0}{11.2}{$V_{raw}$}{
             \draw[scope_wave] plot[domain=-1.0:1.0, samples=80] 
                 (\x, {0.20 + 0.25*exp(-mod(\x+1.0, 0.5)/0.45)});
         }
 
         % Scope 4: Stable Zener Reference Voltage (Probing V_ref)
-        \scopeDisplay{14.0}{11.2}{$V_{ref}$}{
+        \scopeDisplay{14.5}{11.2}{$V_{ref}$}{
             \draw[scope_wave] (-1.0, 0.25) -- (1.0, 0.25);
         }
 
         % Scope 5: Pure Regulated DC Output Voltage (Probing v_o)
-        \scopeDisplay{37.0}{11.2}{$v_o$}{
+        \scopeDisplay{46.5}{11.2}{$v_o$}{
             \draw[scope_wave] (-1.0, 0.40) -- (1.0, 0.40);
         }
 
@@ -106,13 +107,13 @@
     % 2. MAIN RAILS: RAW DC AND SYSTEM GROUND
     % =========================================================================
 
-    % Upper DC Rail (V_raw): Starts at Rectifier Leg 1, ends at Q_pass Collector
-    \draw[power_rail] (5.5, 8.0) -- (26.0, 8.0);
-    \node[above=2pt] at (8.5, 8.0) {$V_{raw}$};
+    % Upper DC Rail (V_raw): Starts at Rectifier Leg 1, feeds pass stage collectors
+    \draw[power_rail] (5.5, 8.0) -- (34.0, 8.0);
+    \node[above=2pt] at (9.0, 8.0) {$V_{raw}$};
 
     % Lower System Return Ground Rail: Continuous across secondary domain
-    \draw[ground_rail] (5.5, 0.0) -- (38.5, 0.0);
-    \node[ground] at (38.0, 0.0) {};
+    \draw[ground_rail] (5.5, 0.0) -- (48.0, 0.0);
+    \node[ground] at (47.5, 0.0) {};
 
     % =========================================================================
     % STAGE 1: POWER (AC Source, Transformer, Diode Bridge, Filter, Bleeder)
@@ -151,18 +152,18 @@
     \draw[signal_wire] (SEC_A2) to[D, l_=$D_2$] (7.5, 8.0) node[circ] {};
 
     % Bulk Filter Capacitor C_filt (component eC, positive to negative)
-    \draw[signal_wire] (9.5, 8.0) node[circ] {} to[eC, l=$C_{filt}$] (9.5, 0.0) node[circ] {};
+    \draw[signal_wire] (10.0, 8.0) node[circ] {} to[eC, l=$C_{filt}$] (10.0, 0.0) node[circ] {};
 
     % Bleeder Resistor R_bleed
-    \draw[signal_wire] (11.5, 8.0) node[circ] {} to[R, l=$R_{bleed}$] (11.5, 0.0) node[circ] {};
+    \draw[signal_wire] (12.0, 8.0) node[circ] {} to[R, l=$R_{bleed}$] (12.0, 0.0) node[circ] {};
 
     % =========================================================================
     % STAGE 2: BIAS & REFERENCE (R_bias, Zener Diode D_Z, Reference Node V_ref)
     % =========================================================================
 
-    \coordinate (VREF) at (13.5, 4.0);
-    \draw[signal_wire] (13.5, 8.0) node[circ] {} to[R, l=$R_{bias}$] (VREF) node[circ] {};
-    \draw[signal_wire] (13.5, 0.0) node[circ] {} to[zD, l_=$D_Z$] (VREF);
+    \coordinate (VREF) at (14.5, 4.0);
+    \draw[signal_wire] (14.5, 8.0) node[circ] {} to[R, l=$R_{bias}$] (VREF) node[circ] {};
+    \draw[signal_wire] (14.5, 0.0) node[circ] {} to[zD, l_=$D_Z$] (VREF);
     \node[above left=2pt] at (VREF) {$V_{ref}$};
 
     % =========================================================================
@@ -170,32 +171,32 @@
     % =========================================================================
 
     % NPN Differential Pair Transistors
-    \node[npn] (Q1) at (15.5, 4.0) {};
-    \node[npn, xscale=-1] (Q2) at (18.5, 4.0) {};
+    \node[npn] (Q1) at (17.0, 4.0) {};
+    \node[npn, xscale=-1] (Q2) at (20.5, 4.0) {};
     \node[above left=2pt] at (Q1.center) {$Q_1$};
     \node[above right=2pt] at (Q2.center) {$Q_2$};
 
     % Direct connection from Reference Node to Non-Inverting Base of Q1
-    \draw[signal_wire] (VREF) -- (14.0, 4.0) node[circ] {} -- (Q1.B);
+    \draw[signal_wire] (VREF) -- (Q1.B);
 
     % Tail Current Sink from Joined Emitters to Ground Rail
-    \coordinate (TAIL) at (17.0, 2.4);
+    \coordinate (TAIL) at (18.75, 2.4);
     \draw[signal_wire] (Q1.E) |- (TAIL) node[circ] {} -| (Q2.E);
-    \draw[signal_wire] (TAIL) to[isource, l_=$I_{tail}$] (17.0, 0.0) node[circ] {};
+    \draw[signal_wire] (TAIL) to[isource, l_=$I_{tail}$] (18.75, 0.0) node[circ] {};
 
     % Active PNP Current Mirror Load
-    \node[pnp, xscale=-1] (Q3) at (15.5, 6.6) {};
-    \node[pnp] (Q4) at (18.5, 6.6) {};
+    \node[pnp, xscale=-1] (Q3) at (17.0, 6.6) {};
+    \node[pnp] (Q4) at (20.5, 6.6) {};
     \node[above left=2pt] at (Q3.center) {$Q_3$};
     \node[above right=2pt] at (Q4.center) {$Q_4$};
 
     % Mirror Emitter Connections to V_raw Rail (Colinear Verticals)
-    \draw[signal_wire] (Q3.E) -- (15.5, 8.0) node[circ] {};
-    \draw[signal_wire] (Q4.E) -- (18.5, 8.0) node[circ] {};
+    \draw[signal_wire] (Q3.E) -- (17.0, 8.0) node[circ] {};
+    \draw[signal_wire] (Q4.E) -- (20.5, 8.0) node[circ] {};
 
     % Collector Interconnections (Q1 to Q3, Q2 to Q4)
-    \coordinate (C13) at (15.5, 5.4);
-    \coordinate (N2) at (18.5, 5.3);
+    \coordinate (C13) at (17.0, 5.4);
+    \coordinate (N2) at (20.5, 5.3);
     \draw[signal_wire] (Q1.C) -- (Q3.C);
     \draw[signal_wire] (Q2.C) -- (Q4.C);
     \node[circ] at (C13) {};
@@ -203,86 +204,99 @@
 
     % Diode Connection on Q3 Driving Bases of Q3 and Q4 (Clean orthogonal routing)
     \draw[signal_wire] (Q3.B) -- (Q4.B);
-    \draw[signal_wire] (C13) -- (17.0, 5.4) -- (17.0, 6.6) node[circ] {};
+    \draw[signal_wire] (C13) -- (18.75, 5.4) -- (18.75, 6.6) node[circ] {};
 
     % =========================================================================
     % STAGE 4: VOLTAGE AMPLIFIER STAGE (VAS: Q5, R_E, R_C, Miller C_c)
     % =========================================================================
 
     % High-Gain NPN Transistor
-    \node[npn] (Q5) at (22.5, 4.6) {};
+    \node[npn] (Q5) at (24.5, 4.6) {};
     \node[above right=2pt] at (Q5.center) {$Q_5$};
 
     % Drive from Error Amplifier Output Node N2 into Q5 Base (100% Orthogonal)
-    \coordinate (N_BASE5) at (21.0, 4.6);
-    \draw[signal_wire] (N2) -- (21.0, 5.3) -- (N_BASE5) node[circ] {} -- (Q5.B);
+    \coordinate (N_BASE5) at (22.5, 4.6);
+    \draw[signal_wire] (N2) -- (22.5, 5.3) -- (N_BASE5) node[circ] {} -- (Q5.B);
 
-    % Emitter Degeneration Resistor R_E to Ground Rail (Clear of feedback line)
-    \draw[signal_wire] (Q5.E) to[R, l_=$R_E$] (22.5, 2.0) -- (22.5, 0.0) node[circ] {};
+    % Emitter Degeneration Resistor R_E to Ground Rail
+    \draw[signal_wire] (Q5.E) to[R, l_=$R_E$] (24.5, 2.2) -- (24.5, 0.0) node[circ] {};
 
     % Pull-Up Bias Resistor R_C from V_raw Rail
-    \coordinate (VAS_OUT) at (22.5, 6.5);
-    \draw[signal_wire] (22.5, 8.0) node[circ] {} to[R, l=$R_C$] (VAS_OUT) node[circ] {};
+    \coordinate (VAS_OUT) at (24.5, 6.5);
+    \draw[signal_wire] (24.5, 8.0) node[circ] {} to[R, l=$R_C$] (VAS_OUT) node[circ] {};
     \draw[signal_wire] (Q5.C) -- (VAS_OUT);
 
     % Miller Compensation Capacitor C_c directly between Collector and Base
-    \draw[signal_wire] (VAS_OUT) -- (21.0, 6.5) to[C, l_=$C_c$] (N_BASE5);
+    \draw[signal_wire] (VAS_OUT) -- (22.5, 6.5) to[C, l_=$C_c$] (N_BASE5);
 
     % =========================================================================
     % STAGE 5: PASS ELEMENT, CURRENT LIMITING & CLOSED FEEDBACK LOOP
     % =========================================================================
 
-    % Power Pass NPN Transistor Q_pass
-    \node[npn] (Qpass) at (26.0, 6.5) {};
+    % Drive Node DRV connecting VAS Output to Driver and Current Limiter
+    \coordinate (DRV) at (27.5, 6.5);
+    \draw[signal_wire] (VAS_OUT) -- (DRV) node[circ] {};
+
+    % Current Limit Transistor Q_limit (NPN)
+    \node[npn, xscale=-1] (Qlim) at (27.5, 4.2) {};
+    \node[left=3pt] at (Qlim.center) {$Q_{limit}$};
+
+    % Collector pulling down DRV Node (100% Colinear Vertical)
+    \draw[signal_wire] (Qlim.C) -- (DRV);
+
+    % Driver Transistor Q_drv (NPN, First Half of Darlington Pair)
+    \node[npn] (Qdrv) at (30.5, 6.5) {};
+    \node[above left=2pt] at (Qdrv.center) {$Q_{drv}$};
+
+    % DRV node into Q_drv Base
+    \draw[signal_wire] (DRV) -- (Qdrv.B);
+
+    % Collector of Q_drv to V_raw Rail
+    \draw[signal_wire] (Qdrv.C) -- (30.5, 8.0) node[circ] {};
+
+    % Power Pass NPN Transistor Q_pass (Main Output Pass BJT)
+    \node[npn] (Qpass) at (34.0, 6.5) {};
     \node[above left=2pt] at (Qpass.center) {$Q_{pass}$};
 
     % Collector of Q_pass to V_raw Rail
-    \draw[signal_wire] (Qpass.C) -- (26.0, 8.0) node[circ] {};
+    \draw[signal_wire] (Qpass.C) -- (34.0, 8.0) node[circ] {};
 
-    % Drive Node DRV connecting VAS Output to Q_pass Base
-    \coordinate (DRV) at (24.5, 6.5);
-    \draw[signal_wire] (VAS_OUT) -- (DRV) node[circ] {} -- (Qpass.B);
+    % Darlington Interconnection: Q_drv Emitter drives Q_pass Base
+    \draw[signal_wire] (Qdrv.E) -- (30.5, 5.6) -| (32.2, 6.5) -- (Qpass.B);
 
     % Current Limit Sense Resistor R_sc in Series with Output (100% Colinear)
-    \coordinate (SENSE) at (27.5, 0 |- Qpass.E);
-    \coordinate (VOUT_NODE) at (30.0, 0 |- Qpass.E);
+    \coordinate (SENSE) at (36.0, 0 |- Qpass.E);
+    \coordinate (VOUT_NODE) at (39.5, 0 |- Qpass.E);
     \draw[signal_wire] (Qpass.E) -- (SENSE) node[circ] {};
     \draw[signal_wire] (SENSE) to[R, l=$R_{sc}$] (VOUT_NODE) node[circ] {};
 
-    % Current Limit Transistor Q_limit (NPN)
-    \node[npn, xscale=-1] (Qlim) at (24.5, 4.4) {};
-    \node[below left=2pt] at (Qlim.center) {$Q_{limit}$};
-
-    % Collector pulling down Q_pass Base
-    \draw[signal_wire] (Qlim.C) -- (DRV);
-
     % Base sensing upstream node of R_sc (SENSE)
-    \draw[signal_wire] (Qlim.B) -- (27.5, 0 |- Qlim.B) -- (SENSE);
+    \draw[signal_wire] (Qlim.B) -- (36.0, 0 |- Qlim.B) -- (SENSE);
 
     % Emitter sensing downstream node of R_sc (VOUT_NODE)
-    \draw[signal_wire] (Qlim.E) |- (30.0, 3.2) -- (VOUT_NODE);
+    \draw[signal_wire] (Qlim.E) |- (39.5, 3.0) -- (VOUT_NODE);
 
     % Regulated Output Rail (v_o)
-    \draw[power_rail] (VOUT_NODE) -- (38.5, 0 |- Qpass.E);
+    \draw[power_rail] (VOUT_NODE) -- (48.0, 0 |- Qpass.E);
 
     % Output Smoothing Capacitor C_out to Ground Rail
-    \draw[signal_wire] (32.0, 0 |- Qpass.E) node[circ] {} to[C, l=$C_{out}$] (32.0, 0.0) node[circ] {};
+    \draw[signal_wire] (41.5, 0 |- Qpass.E) node[circ] {} to[C, l=$C_{out}$] (41.5, 0.0) node[circ] {};
 
     % Resistive Feedback Voltage Divider (R1 and R2)
-    \coordinate (FB) at (34.5, 3.5);
-    \draw[signal_wire] (34.5, 0 |- Qpass.E) node[circ] {} to[R, l=$R_1$] (FB) node[circ] {};
-    \draw[signal_wire] (FB) to[R, l=$R_2$] (34.5, 1.8) -- (34.5, 0.0) node[circ] {};
+    \coordinate (FB) at (44.0, 3.5);
+    \draw[signal_wire] (44.0, 0 |- Qpass.E) node[circ] {} to[R, l=$R_1$] (FB) node[circ] {};
+    \draw[signal_wire] (FB) to[R, l=$R_2$] (44.0, 1.8) -- (44.0, 0.0) node[circ] {};
 
     % Dedicated Clear Orthogonal Corridor: FB tap cleanly routes back to Base of Q2
-    \draw[feedback_corridor] (FB) -- (33.2, 3.5) -- (33.2, 1.0) -- (19.8, 1.0) |- (Q2.B);
+    \draw[feedback_corridor] (FB) -- (42.8, 3.5) -- (42.8, 1.0) -- (21.8, 1.0) -- (21.8, 4.0) -- (Q2.B);
 
     % Load Resistor R_L across Output Terminals
-    \draw[signal_wire] (37.0, 0 |- Qpass.E) node[circ] {} to[R, l=$R_L$] (37.0, 0.0) node[circ] {};
+    \draw[signal_wire] (46.5, 0 |- Qpass.E) node[circ] {} to[R, l=$R_L$] (46.5, 0.0) node[circ] {};
 
     % Output Voltage Terminals & Symbol v_o
-    \draw[signal_wire] (38.5, 0 |- Qpass.E) to[short, -o] (39.2, 0 |- Qpass.E);
-    \draw[signal_wire] (38.5, 0.0) to[short, -o] (39.2, 0.0);
-    \draw (39.2, 0 |- Qpass.E) to[open, v^=$v_o$] (39.2, 0.0);
+    \draw[signal_wire] (48.0, 0 |- Qpass.E) to[short, -o] (48.8, 0 |- Qpass.E);
+    \draw[signal_wire] (48.0, 0.0) to[short, -o] (48.8, 0.0);
+    \draw (48.8, 0 |- Qpass.E) to[open, v^=$v_o$] (48.8, 0.0);
 
     % =========================================================================
     % PROBE LINES (Connecting Test Points to Background Layer Scopes)
@@ -290,9 +304,9 @@
     \begin{pgfonlayer}{background}
         \draw[probe_line] (1.0, 10.35) -- (1.0, 0 |- T1.A1) node[circ] {};
         \draw[probe_line] (4.5, 10.35) -- (4.5, 0 |- T1.B1);
-        \draw[probe_line] (10.5, 10.35) -- (10.5, 8.0) node[circ] {};
-        \draw[probe_line] (14.0, 10.35) -- (14.0, 4.0);
-        \draw[probe_line] (37.0, 10.35) -- (37.0, 0 |- Qpass.E) node[circ] {};
+        \draw[probe_line] (10.0, 10.35) -- (10.0, 8.0) node[circ] {};
+        \draw[probe_line] (14.5, 10.35) -- (14.5, 4.0);
+        \draw[probe_line] (46.5, 10.35) -- (46.5, 0 |- Qpass.E) node[circ] {};
     \end{pgfonlayer}
 
 \end{circuitikz}

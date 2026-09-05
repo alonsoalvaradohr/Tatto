@@ -56,17 +56,22 @@ function simscape_integrated_system()
     p.V_BE_on      = 0.65;               % Small-signal BJT V_BE turn-on voltage (V)
 
     % --- STAGE 5: SERIES PASS, CURRENT LIMITING & CLOSED FEEDBACK ---
+    % Enhanced Darlington Pass Stage (Q_drv 2N3904 + Q_pass TIP31C)
+    p.beta_drv     = 200.0;              % Driver BJT current gain (2N3904)
+    p.V_BE_drv     = 0.65;               % Driver BJT V_BE drop (V)
     p.beta_pass    = 60.0;               % Power pass NPN current gain (TIP31C)
     p.V_BE_pass    = 0.75;               % Power pass V_BE at nominal load (V)
+    p.beta_darlington = p.beta_drv * p.beta_pass; % Combined Darlington current gain = 12,000
+    p.V_BE_tot     = p.V_BE_drv + p.V_BE_pass;   % Total Darlington V_BE drop = 1.40 V
     p.R_sc         = 0.33;               % Current limit sense resistor (Ohms)
     p.V_BE_limit   = 0.65;               % Current limiter Q_limit threshold (V)
     p.g_m_lim      = 20.0;               % Limiter diversion transconductance (A/V)
     p.C_out        = 100e-6;             % Output smoothing capacitance (F) = 100 uF
     p.R_out_esr    = 0.05;               % Output capacitor ESR (Ohms)
-    p.R1           = 4700.0;             % Upper feedback divider resistor (Ohms)
+    p.R1           = 4470.0;             % Upper feedback divider resistor (Ohms) (tuned for 12.0 V)
     p.R2           = 3300.0;             % Lower feedback divider resistor (Ohms)
-    p.R_load_nom   = 12.0;               % Nominal load resistance (Ohms) (I_out ~ 1.05 A)
-    p.R_load_step  = 8.0;                % Stepped load resistance (Ohms) (I_out ~ 1.58 A)
+    p.R_load_nom   = 10.0;               % Nominal load resistance (Ohms) (I_out = 1.20 A)
+    p.R_load_step  = 7.0;                % Stepped load resistance (Ohms) (I_out ~ 1.71 A)
     p.t_step       = 0.030;              % Load step transition timestamp (s) = 30 ms
 
     %% ---------------------------------------------------------------------
@@ -228,7 +233,7 @@ function simscape_integrated_system()
     subplot(3, 2, 2);
     plot(t_vec * 1e3, v_out, 'Color', [0.1, 0.6, 0.2], 'LineWidth', 1.8); hold on;
     xline(p.t_step * 1e3, 'Color', [0.4, 0.4, 0.4], 'LineStyle', '--', 'LineWidth', 1.1, ...
-          'Label', 'Paso de Carga (12\Omega \rightarrow 8\Omega)', 'LabelHorizontalAlignment', 'center');
+          'Label', 'Paso de Carga (10\Omega \rightarrow 7\Omega)', 'LabelHorizontalAlignment', 'center');
     yline(V_out_target, 'Color', [0.2, 0.2, 0.2], 'LineStyle', ':', 'LineWidth', 1.0, ...
           'Label', sprintf('V_{target} = %.2f V', V_out_target));
     grid on; box on;
@@ -339,8 +344,8 @@ function [dxdt, alg] = integrated_dynamics(t, x, p)
     G_load = 1.0 / R_load;
     G_eq   = G_load + G_div;
 
-    % Pass transistor emitter potential
-    v_emit = max(0.0, v_VAS - p.V_BE_pass);
+    % Pass transistor emitter potential with Darlington V_BE drop
+    v_emit = max(0.0, v_VAS - p.V_BE_tot);
 
     % Output node algebraic solution with ESR coupling
     G_sc = 1.0 / p.R_sc;
@@ -376,8 +381,11 @@ function [dxdt, alg] = integrated_dynamics(t, x, p)
     i_vas_sink = (i_tail_actual / 2.0) * (1.0 - tanh(v_diff / (2.0 * p.V_T)) * (p.beta_vas / 10.0));
     i_vas_sink = max(0.0, i_vas_sink);
 
+    % Base current drawn by Darlington input driver Q_drv:
+    i_base_drv = i_pass / p.beta_darlington;
+
     % Net current integrating into Miller compensation capacitor C_c
-    i_VAS_net = i_pullup - i_vas_sink - i_limit;
+    i_VAS_net = i_pullup - i_vas_sink - i_limit - i_base_drv;
     
     % Physical saturation boundary handling
     if (v_VAS <= 0.0) && (i_VAS_net < 0.0)

@@ -1,0 +1,152 @@
+* =============================================================================
+* TATTO PROJECT — DEDICATED ORACLE TESTBENCH: 120V MAINS TO 12V REGULATED DC
+* File: simulations/spice/testbench_120v_to_12v.cir
+* Mission: Closed-Loop Non-Linear Oracle Validation (Phase 4.3)
+* Standard: Berkeley SPICE3f5 / NGSPICE / CTAN CircuiTikZ 1:1 Fidelity
+* Topology: Monolithic Bare-Metal Discrete Silicon (100% BJT, 0% Op-Amps)
+* Output Target: 12.0 V Regulated DC under 1.20 A Load (R_load = 10.0 Ohm)
+* Core Topology: Darlington Pass Stage (Q_drv + Q_pass) in 1:1 sync with
+*                figures/tikz/master_integrated_system.tex
+* =============================================================================
+
+* -----------------------------------------------------------------------------
+* 1. TESTBENCH INJECTION PARAMETERS
+* -----------------------------------------------------------------------------
+.param V_pri_rms    = 120.0
+.param V_pri_pk     = {V_pri_rms * sqrt(2.0)}
+.param f_line       = 60.0
+.param V_ac_off     = 0.0
+.param V_ac_dly     = 0.0
+.param V_ac_damp    = 0.0
+
+* Transformer Parameters (k_T = 0.15 -> V_sec_pk ~ 25.45 V)
+.param k_T          = 0.15
+.param L_pri_val    = 10.0
+.param L_sec_val    = {L_pri_val * (k_T * k_T)}
+.param K_trans_val  = 0.9995
+.param R_sec_w_val  = 10m
+
+* Passive Stage Parameters
+.param C_filt_val   = 4700u
+.param R_bleed_val  = 1.0k
+.param R_bias_val   = 1.5k
+.param I_tail_val   = 2.0m
+.param R_E_val      = 100.0
+.param R_C_val      = 2.2k
+.param C_c_val      = 100p
+.param R_sc_val     = 0.33
+.param C_out_val    = 100u
+
+* Feedback Divider Ratios: V_out_nom = V_ref * (1 + R1/R2)
+* For V_ref = 5.1 V and V_out = 12.0 V:
+* R2 = 3.3k, R1 = 3.3k * (12.0 / 5.1 - 1) = 4.465k ~ 4.47k
+.param R1_val       = 4.47k
+.param R2_val       = 3.3k
+
+* Target Real-World Testbench Load: 10.0 Ohm (I_out = 1.20 A)
+.param R_load_val   = 10.0
+
+* =============================================================================
+* STAGE 1: POWER (AC Source, Transformer, Diode Bridge, Filter, Bleeder)
+* =============================================================================
+V_AC    N_PRI_1 N_PRI_2 SIN({V_ac_off} {V_pri_pk} {f_line} {V_ac_dly} {V_ac_damp})
+L1      N_PRI_1 N_PRI_2 {L_pri_val}
+L2      SEC_A1  N_SEC_B {L_sec_val}
+K12     L1      L2      {K_trans_val}
+R_SEC   N_SEC_B SEC_A2  {R_sec_w_val}
+
+* Full-Wave Diode Bridge (D1 - D4)
+D1      SEC_A1  V_RAW   D1N4007
+D2      SEC_A2  V_RAW   D1N4007
+D3      0       SEC_A1  D1N4007
+D4      0       SEC_A2  D1N4007
+
+* Bulk Filter Capacitor C_filt & Bleeder Resistor R_bleed
+C_FILT  V_RAW   0       {C_filt_val}
+R_BLEED V_RAW   0       {R_bleed_val}
+
+* =============================================================================
+* STAGE 2: BIAS & REFERENCE (R_bias, Zener Diode D_Z, Reference Node V_ref)
+* =============================================================================
+R_BIAS  V_RAW   V_REF   {R_bias_val}
+D_Z     0       V_REF   BZX84C5V1
+
+* =============================================================================
+* STAGE 3: ERROR AMPLIFIER (Discrete BJT Level: Diff Pair & Current Mirror)
+* =============================================================================
+* Differential Pair (Q1, Q2)
+Q1      N_C13   V_REF   N_TAIL  2N3904
+Q2      N_C24   N_FB    N_TAIL  2N3904
+
+* Tail Current Sink
+I_TAIL  N_TAIL  0       {I_tail_val}
+
+* Active PNP Current Mirror Load (Q3, Q4)
+Q3      N_C13   N_C13   V_RAW   2N3906
+Q4      N_C24   N_C13   V_RAW   2N3906
+
+* =============================================================================
+* STAGE 4: VOLTAGE AMPLIFIER STAGE (VAS: Q5, R_E, R_C, Miller C_c)
+* =============================================================================
+Q5      N_VAS_OUT N_C24 N_Q5_E  2N3904
+R_E     N_Q5_E  0       {R_E_val}
+R_C     V_RAW   N_VAS_OUT {R_C_val}
+C_C     N_VAS_OUT N_C24 {C_c_val}
+
+* =============================================================================
+* STAGE 5: PASS ELEMENT, CURRENT LIMITING & CLOSED FEEDBACK LOOP
+* =============================================================================
+* Driver Transistor Q_drv (First stage of Darlington pair)
+Q_DRV   V_RAW   N_VAS_OUT N_QPASS_B 2N3904
+
+* Power Pass Transistor (Q_pass - Second stage of Darlington pair)
+Q_PASS  V_RAW   N_QPASS_B N_SENSE TIP31C
+
+* Current Sense Resistor R_sc
+R_SC    N_SENSE V_OUT   {R_sc_val}
+
+* Current Limiting Transistor (Q_limit)
+Q_LIMIT N_VAS_OUT N_SENSE V_OUT 2N3904
+
+* Output Smoothing Capacitor C_out
+C_OUT   V_OUT   0       {C_out_val}
+
+* Resistive Feedback Divider (R1, R2)
+R1      V_OUT   N_FB    {R1_val}
+R2      N_FB    0       {R2_val}
+
+* Nominal Load Resistor R_L (10.0 Ohm -> 1.20 A)
+R_LOAD  V_OUT   0       {R_load_val}
+
+* =============================================================================
+* DEVICE SEMICONDUCTOR MODELS (Physics-Based JEDEC Models)
+* =============================================================================
+.model D1N4007 D(Is=7.027n Rs=0.03415 N=1.802 Bv=1000 Ibv=0.05u Cjo=10p Vj=0.75)
+.model BZX84C5V1 D(Is=1e-15 Bv=5.1 Ibv=5m Nbv=1.2 Rs=0.5)
+.model 2N3904 NPN(Is=1e-14 Bf=200 Vaf=100 Cjc=4p Cje=8p Tf=0.3n)
+.model 2N3906 PNP(Is=1e-14 Bf=180 Vaf=100 Cjc=4.5p Cje=10p Tf=0.35n)
+.model TIP31C NPN(Is=1e-12 Bf=60 Vaf=100 Cjc=50p Cje=120p Tf=10n)
+
+* =============================================================================
+* SIMULATION DIRECTIVES & SOLVER CONTROL
+* =============================================================================
+.options method=gear reltol=1e-4 gmin=1e-12 abstol=1e-12
+.tran 10u 50m uic
+
+* Automated Oracle Performance Metrics
+.control
+  run
+  echo "=================================================================="
+  echo " TATTO DEDICATED ORACLE TESTBENCH: 120V AC MAINS -> 12V DC OUT    "
+  echo "=================================================================="
+  meas tran Vsec_pk MAX v(SEC_A1) from=20m to=50m
+  meas tran Vraw_avg AVG v(V_RAW) from=20m to=50m
+  meas tran Vraw_rip PP v(V_RAW) from=20m to=50m
+  meas tran Vref_avg AVG v(V_REF) from=20m to=50m
+  meas tran Vout_avg AVG v(V_OUT) from=20m to=50m
+  meas tran Vout_rip PP v(V_OUT) from=20m to=50m
+  meas tran Iout_avg AVG i(R_LOAD) from=20m to=50m
+  print Vsec_pk Vraw_avg Vraw_rip Vref_avg Vout_avg Vout_rip Iout_avg
+.endc
+
+.end

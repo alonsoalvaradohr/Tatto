@@ -2,6 +2,7 @@
 * TATTO PROJECT — MASTER INTEGRATED SYSTEM: BARE-METAL DISCRETE SILICON
 * Monolithic Discrete E2E Transformer-Regulator SPICE Netlist
 * Topology: 100% Discrete BJT Silicon Level (Zero Op-Amps / Macro Blocks)
+* Stage Architecture: Enhanced Darlington Pass Element (Q_drv + Q_pass)
 * Biunivocal Node Mapping to figures/tikz/master_integrated_system.tex
 * Standard: Berkeley SPICE3f5 / NGSPICE / CTAN CircuiTikZ 1:1 Fidelity
 * =============================================================================
@@ -29,7 +30,7 @@
 .param C_c_val      = 100p
 .param R_sc_val     = 0.33
 .param C_out_val    = 100u
-.param R1_val       = 4.7k
+.param R1_val       = 4.47k
 .param R2_val       = 3.3k
 .param R_load_val   = 10.0
 
@@ -66,8 +67,8 @@ D_Z     0       V_REF   BZX84C5V1
 * STAGE 3: ERROR AMPLIFIER (Discrete BJT Level: Diff Pair & Current Mirror)
 * =============================================================================
 * Differential Pair (Q1, Q2)
-* Q1: Non-inverting input receives V_REF (TikZ coordinate 14.0, 4.0)
-* Q2: Inverting input receives feedback node N_FB (TikZ coordinate 19.8, 1.0)
+* Q1: Non-inverting input receives V_REF (TikZ coordinate 14.5, 4.0)
+* Q2: Inverting input receives feedback node N_FB (TikZ coordinate 21.8, 4.0)
 Q1      N_C13   V_REF   N_TAIL  2N3904
 Q2      N_C24   N_FB    N_TAIL  2N3904
 
@@ -75,8 +76,8 @@ Q2      N_C24   N_FB    N_TAIL  2N3904
 I_TAIL  N_TAIL  0       {I_tail_val}
 
 * Active PNP Current Mirror Load (Q3, Q4)
-* Q3: Diode-connected master mirror transistor (TikZ coordinate 15.5, 6.6)
-* Q4: Slave mirror output transistor (TikZ coordinate 18.5, 6.6)
+* Q3: Diode-connected master mirror transistor (TikZ coordinate 17.0, 6.6)
+* Q4: Slave mirror output transistor (TikZ coordinate 20.5, 6.6)
 Q3      N_C13   N_C13   V_RAW   2N3906
 Q4      N_C24   N_C13   V_RAW   2N3906
 
@@ -91,13 +92,17 @@ C_C     N_VAS_OUT N_C24 {C_c_val}
 * =============================================================================
 * STAGE 5: PASS ELEMENT, CURRENT LIMITING & CLOSED FEEDBACK LOOP
 * =============================================================================
-* Power Pass Transistor (Q_pass)
-Q_PASS  V_RAW   N_VAS_OUT N_SENSE TIP31C
+* Driver Transistor Q_drv (First stage of Darlington pair)
+Q_DRV   V_RAW   N_VAS_OUT N_QPASS_B 2N3904
+
+* Power Pass Transistor (Q_pass - Second stage of Darlington pair)
+Q_PASS  V_RAW   N_QPASS_B N_SENSE TIP31C
 
 * Current Sense Resistor R_sc
 R_SC    N_SENSE V_OUT   {R_sc_val}
 
 * Current Limiting Transistor (Q_limit)
+* Collector pulls down N_VAS_OUT (shutting off Q_drv & Q_pass)
 Q_LIMIT N_VAS_OUT N_SENSE V_OUT 2N3904
 
 * Output Smoothing Capacitor C_out
