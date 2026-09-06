@@ -19,6 +19,7 @@
 .param L_sec_val    = {L_pri_val * (k_T * k_T)}
 .param K_trans_val  = 0.9995
 .param R_sec_w_val  = 10m
+.param R_pri_ref_val = 1.0G
 
 * Discrete Semiconductor & Passive Stage Parameters
 .param C_filt_val   = 4700u
@@ -39,6 +40,8 @@
 * =============================================================================
 V_AC    N_PRI_1 N_PRI_2 SIN({V_ac_off} {V_pri_pk} {f_line} {V_ac_dly} {V_ac_damp})
 L1      N_PRI_1 N_PRI_2 {L_pri_val}
+* Numerical reference only: preserves the galvanic isolation of T1 in practice.
+R_PRI_REF N_PRI_2 0 {R_pri_ref_val}
 L2      SEC_A1  N_SEC_B {L_sec_val}
 K12     L1      L2      {K_trans_val}
 R_SEC   N_SEC_B SEC_A2  {R_sec_w_val}
