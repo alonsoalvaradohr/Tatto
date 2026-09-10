@@ -81,43 +81,44 @@
         }
 
         % Scope 1: Primary AC Input Waveform (Probing v_ac)
-        \scopeDisplay{1.0}{11.2}{$v_{ac}$}{
+        \scopeDisplay{1.0}{13.0}{$v_{ac}$}{
             \draw[scope_wave] plot[domain=-1.0:1.0, samples=60] (\x, {0.55*sin(360*\x/1.0)});
         }
 
         % Scope 2: Secondary AC Waveform (Probing v_sec)
-        \scopeDisplay{4.5}{11.2}{$v_{sec}$}{
+        \scopeDisplay{4.5}{13.0}{$v_{sec}$}{
             \draw[scope_wave] plot[domain=-1.0:1.0, samples=60] (\x, {0.40*sin(360*\x/1.0)});
         }
 
         % Scope 3: Unregulated Smoothed DC with Ripple (Probing V_raw)
-        \scopeDisplay{10.0}{11.2}{$V_{raw}$}{
+        \scopeDisplay{10.0}{13.0}{$V_{raw}$}{
             \draw[scope_wave] plot[domain=-1.0:1.0, samples=80] 
                 (\x, {0.20 + 0.25*exp(-mod(\x+1.0, 0.5)/0.45)});
         }
 
         % Scope 4: Stable Zener Reference Voltage (Probing V_ref)
-        \scopeDisplay{14.5}{11.2}{$V_{ref}$}{
+        \scopeDisplay{14.5}{13.0}{$V_{ref}$}{
             \draw[scope_wave] (-1.0, 0.25) -- (1.0, 0.25);
         }
 
         % Scope 5: Pure Regulated DC Output Voltage (Probing v_o)
-        \scopeDisplay{46.5}{11.2}{$v_o$}{
+        \scopeDisplay{46.5}{13.0}{$v_o$}{
             \draw[scope_wave] (-1.0, 0.40) -- (1.0, 0.40);
         }
 
     \end{pgfonlayer}
 
     % =========================================================================
-    % STAGE TRANSFER FUNCTIONS (Analytic Closed-Form Equations)
+    % STAGE TRANSFER FUNCTIONS (Analytical Closed-Form Expressions, Phase 7.2)
     % =========================================================================
-    \node[font=\scriptsize\sffamily, anchor=east] at (9.4, 9.8) {$V_{raw} \approx \hat{v}_{sec} - 2V_D - \frac{I_{load}}{2 f C_{filt}}$};
-    \node[font=\scriptsize\sffamily, anchor=east] at (13.0, 9.8) {$V_{ref} = V_Z$};
-    \node[font=\scriptsize\sffamily, align=center] at (34.0, 9.8) {$v_o = V_{ref} \left(1 + \frac{R_1}{R_2}\right)$};
-    \node[font=\scriptsize\sffamily, align=center] at (17.0, 10.2) {$A_{EA0} \approx g_{m1} \cdot (r_{o2} || r_{o4} || r_{\pi5})$};
-    \node[font=\scriptsize\sffamily, align=center] at (22.5, 10.2) {$\omega_{p1} \approx \left[ R_{in,VAS} \cdot C_c \cdot |A_{VAS0}| \right]^{-1}$};
-    \node[font=\scriptsize\sffamily, align=center] at (30.0, 10.6) {$Z_{out}(s) \approx \frac{g_{m,pass}^{-1} + R_{sc}}{1 + T(s)}$};
-    \node[font=\scriptsize\sffamily, align=center] at (36.0, 10.2) {$S_{V_{RAW}}^{v_o} = \frac{1}{1 + T_0} \cdot \left( \frac{\partial V_{ref}}{\partial V_{RAW}} \cdot \frac{A_0}{\beta_0} + \frac{1}{g_{m,pass} r_{o,pass}} \right)$};
+    \node[font=\large\sffamily, align=center] at (2.8, 10.5) {$v_{sec}(t) = \frac{N_s}{N_p} v_{ac}(t)$};
+    \node[font=\normalsize\sffamily, align=center] at (7.3, 10.5) {$V_{RAW} \approx \hat{v}_{sec} - 2V_D - \frac{I_{load}}{2fC_{filt}}$};
+    \node[font=\large\sffamily, align=center] at (12.2, 10.5) {$V_{ref} = V_Z$};
+    \node[font=\normalsize\sffamily, align=center] at (17.5, 10.5) {$A_{EA0} \approx g_{m1} \cdot (r_{o2} \parallel r_{o4} \parallel r_{\pi5})$};
+    \node[font=\normalsize\sffamily, align=center] at (22.8, 10.5) {$\omega_{p1} \approx \frac{1}{R_{in,VAS} \cdot C_c \cdot |A_{VAS0}|}$};
+    \node[font=\normalsize\sffamily, align=center] at (28.5, 10.5) {$Z_{out}(s) \approx \frac{\frac{1}{g_{m,pass}} + R_{sc}}{1 + T(s)}$};
+    \node[font=\normalsize\sffamily, align=center] at (34.5, 10.5) {$S_{V_{RAW}}^{v_o} = \frac{1}{1 + T_0} \cdot \left( \frac{\partial V_{ref}}{\partial V_{RAW}} \cdot \frac{A_0}{\beta_0} + \frac{1}{g_{m,pass} r_{o,pass}} \right)$};
+    \node[font=\large\sffamily, align=center] at (40.5, 10.5) {$v_o = V_{ref} \left(1 + \frac{R_1}{R_2}\right)$};
 
     % =========================================================================
     % 2. MAIN RAILS: RAW DC AND SYSTEM GROUND
@@ -320,11 +321,11 @@
     % PROBE LINES (Connecting Test Points to Background Layer Scopes)
     % =========================================================================
     \begin{pgfonlayer}{background}
-        \draw[probe_line] (1.0, 10.35) -- (1.0, 0 |- T1.A1) node[circ] {};
-        \draw[probe_line] (4.5, 10.35) -- (4.5, 0 |- T1.B1);
-        \draw[probe_line] (10.0, 10.35) -- (10.0, 8.0) node[circ] {};
-        \draw[probe_line] (14.0, 10.35) -- (14.0, 9.2) -- (13.25, 9.2) -- (13.25, 4.0) -- (VREF);
-        \draw[probe_line] (46.5, 10.35) -- (46.5, 0 |- Qpass.E) node[circ] {};
+        \draw[probe_line] (1.0, 12.15) -- (1.0, 0 |- T1.A1) node[circ] {};
+        \draw[probe_line] (4.5, 12.15) -- (4.5, 0 |- T1.B1);
+        \draw[probe_line] (10.0, 12.15) -- (10.0, 8.0) node[circ] {};
+        \draw[probe_line] (14.0, 12.15) -- (14.0, 9.2) -- (13.25, 9.2) -- (13.25, 4.0) -- (VREF);
+        \draw[probe_line] (46.5, 12.15) -- (46.5, 0 |- Qpass.E) node[circ] {};
     \end{pgfonlayer}
 
     % Clean Reference Junction Dot (Fix 4: Placed after all wires and probe lines)

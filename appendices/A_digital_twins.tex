@@ -11,8 +11,10 @@ En estricto cumplimiento de la reproducibilidad científica y las directrices de
 
 \begin{enumerate}
     \item \textbf{Netlist SPICE Agnóstico Monolítico:} \texttt{master\_integrated\_system.cir}
-    \item \textbf{Modelo Dinámico MATLAB Simscape Electrical (DAE rígido ode23t):} \texttt{simscape\_integrated\_system.m}
+    \item \textbf{Modelo Dinámico MATLAB Simscape Electrical (DAE rígido \texttt{ode23t}):} \texttt{simscape\_integrated\_system.m}
     \item \textbf{Testbench de Validación Experimental 120\,V AC a 12\,V DC:} \texttt{testbench\_120v\allowbreak\_to\allowbreak\_12v.cir}
+    \item \textbf{Testbench SPICE de Estrés Hostil (Senoidal, Triangular, Diente de Sierra, Ruido):} \texttt{stress\_testbench.cir}
+    \item \textbf{Modelo MATLAB de Estrés Hostil (Validación de Inmunidad y Rechazo):} \texttt{stress\_testbench.m}
 \end{enumerate}
 
 % --- Embedding of Source Artifacts into PDF Object Stream (Pure ASCII Descriptions) ---
@@ -31,15 +33,27 @@ En estricto cumplimiento de la reproducibilidad científica y las directrices de
     filespec={testbench_120v_to_12v.cir}
 ]{simulations/spice/testbench_120v_to_12v.cir}
 
+\embedfile[
+    desc={Testbench SPICE de Estres Hostil (Inyeccion Multionda y Perturbacion Extrema)},
+    filespec={stress_testbench.cir}
+]{simulations/spice/stress_testbench.cir}
+
+\embedfile[
+    desc={Modelo MATLAB de Estres Hostil (Solver ode23t, Validacion de Rechazo Dinamico)},
+    filespec={stress_testbench.m}
+]{simulations/matlab/stress_testbench.m}
+
 \section{Instrucciones de Extracción y Ejecución}
 Los modelos pueden extraerse directamente desde el panel de adjuntos de cualquier visor PDF estándar:
 \begin{itemize}
     \item \textbf{NGSPICE / Berkeley SPICE:}
     \begin{verbatim}
     ngspice master_integrated_system.cir
+    ngspice stress_testbench.cir
     \end{verbatim}
     \item \textbf{MATLAB (R2024b+ / Simscape):}
     \begin{verbatim}
     run('simscape_integrated_system.m')
+    run('stress_testbench.m')
     \end{verbatim}
 \end{itemize}
