@@ -1,5 +1,5 @@
 * =============================================================================
-* TATTO PROJECT -- ULTIMATE HOSTILE STRESS-TEST ORACLE (PHASE 7.3)
+* TATTO PROJECT -- ULTIMATE HOSTILE STRESS-TEST ORACLE (PHASE 8.3)
 * File: simulations/spice/stress_testbench.cir
 * Mission: Closed-Loop Line Disturbance Stress Rejection Validation
 * Stimuli: Dynamic Sine, Triangular, High-Slew Sawtooth, and Noise Surges

@@ -1,5 +1,5 @@
 %% =========================================================================
-%% TATTO PROJECT — ULTIMATE HOSTILE STRESS-TEST ORACLE (PHASE 7.3)
+%% TATTO PROJECT — ULTIMATE HOSTILE STRESS-TEST ORACLE (PHASE 8.3)
 %% File: simulations/matlab/stress_testbench.m
 %% Mission: Validate Discrete Silicon Topology against Extreme Line Perturbations
 %% Stimuli: Pure Sine, Triangular, Sawtooth, and Chaotic Surges on V_ac(t)
@@ -11,7 +11,7 @@
 function stress_testbench()
     close all; clc;
     fprintf('====================================================================\n');
-    fprintf(' TATTO POWER SUPPLY — HOSTILE STRESS-TEST ORACLE (PHASE 7.3)        \n');
+    fprintf(' TATTO POWER SUPPLY — HOSTILE STRESS-TEST ORACLE (PHASE 8.3)        \n');
     fprintf(' Severe Input Stimuli: Dynamic Sine, Triangular, Sawtooth & Noise   \n');
     fprintf(' Goal: Verify Closed-Loop Rejection and Stable DC Output at v_o     \n');
     fprintf('====================================================================\n\n');
