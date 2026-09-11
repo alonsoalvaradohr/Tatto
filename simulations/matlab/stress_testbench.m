@@ -246,54 +246,59 @@ function stress_testbench()
     fprintf('====================================================================\n\n');
 
     %% ---------------------------------------------------------------------
-    %% 6. MULTI-PANEL DIAGNOSTIC VISUALIZATION
+    %% 6. MULTI-PANEL DIAGNOSTIC VISUALIZATION (HIGH-CONTRAST WHITE THEME)
     %% ---------------------------------------------------------------------
     fig = figure('Name', 'Hostile Stress-Test Validation', ...
                  'Units', 'pixels', 'Position', [100, 100, 1280, 850], ...
                  'Color', 'w', 'Visible', 'off');
+    set(gcf, 'Color', 'w');
 
     % Subplot 1: Hostile Input Waveform vac(t)
     subplot(4, 1, 1);
-    plot(t_sol * 1000, vac_sol, 'Color', [0.1, 0.1, 0.1], 'LineWidth', 1.2);
+    plot(t_sol * 1000, vac_sol, 'Color', [0.0, 0.4, 0.85], 'LineWidth', 2.0);
     grid on; box on;
+    set(gca, 'Color', 'w', 'XColor', 'k', 'YColor', 'k', 'GridColor', 'k', 'GridAlpha', 0.35);
     xlim([0, 120]); ylim([-240, 240]);
     title('\textbf{Panel 1: Hostile Multi-Phase Input Stimuli $v_{ac}(t)$ (Sine, Triangle, Sawtooth, Surges)}', ...
-          'Interpreter', 'latex', 'FontSize', 11);
-    ylabel('$v_{ac}(t)$ [V]', 'Interpreter', 'latex', 'FontSize', 10);
+          'Interpreter', 'latex', 'FontSize', 11, 'Color', 'k');
+    ylabel('$v_{ac}(t)$ [V]', 'Interpreter', 'latex', 'FontSize', 10, 'Color', 'k');
     % Stage annotations
-    xline(30, '--k', {'Triangle'}, 'LabelVerticalAlignment', 'bottom');
-    xline(60, '--k', {'Sawtooth'}, 'LabelVerticalAlignment', 'bottom');
-    xline(90, '--k', {'Noise / Surges'}, 'LabelVerticalAlignment', 'bottom');
+    xline(30, '--k', {'Triangle'}, 'LabelOrientation', 'horizontal', 'LabelVerticalAlignment', 'top', 'LabelHorizontalAlignment', 'left', 'LineWidth', 1.2, 'Color', 'k');
+    xline(60, '--k', {'Sawtooth'}, 'LabelOrientation', 'horizontal', 'LabelVerticalAlignment', 'top', 'LabelHorizontalAlignment', 'left', 'LineWidth', 1.2, 'Color', 'k');
+    xline(90, '--k', {'Noise / Surges'}, 'LabelOrientation', 'horizontal', 'LabelVerticalAlignment', 'top', 'LabelHorizontalAlignment', 'left', 'LineWidth', 1.2, 'Color', 'k');
 
     % Subplot 2: Unregulated Filter Voltage V_RAW(t)
     subplot(4, 1, 2);
-    plot(t_sol * 1000, v_filt_sol, 'Color', [0.2, 0.2, 0.2], 'LineWidth', 1.3);
+    plot(t_sol * 1000, v_filt_sol, 'Color', [0.85, 0.25, 0.0], 'LineWidth', 2.0);
     grid on; box on;
+    set(gca, 'Color', 'w', 'XColor', 'k', 'YColor', 'k', 'GridColor', 'k', 'GridAlpha', 0.35);
     xlim([0, 120]);
     title('\textbf{Panel 2: Unregulated Secondary DC Rail $V_{\mathrm{RAW}}(t)$ across Bulk Filter $C_{\mathrm{filt}}$}', ...
-          'Interpreter', 'latex', 'FontSize', 11);
-    ylabel('$V_{\mathrm{RAW}}(t)$ [V]', 'Interpreter', 'latex', 'FontSize', 10);
+          'Interpreter', 'latex', 'FontSize', 11, 'Color', 'k');
+    ylabel('$V_{\mathrm{RAW}}(t)$ [V]', 'Interpreter', 'latex', 'FontSize', 10, 'Color', 'k');
 
     % Subplot 3: Regulated Output Voltage v_o(t)
     subplot(4, 1, 3);
-    plot(t_sol * 1000, v_out_sol, 'Color', [0.0, 0.0, 0.0], 'LineWidth', 1.5);
-    yline(12.0, ':k', 'Target = 12.0V', 'LineWidth', 1.1);
+    plot(t_sol * 1000, v_out_sol, 'Color', [0.05, 0.65, 0.2], 'LineWidth', 2.0);
+    yline(12.0, ':k', 'Target = 12.0V', 'LineWidth', 1.4, 'Color', 'k', 'LabelHorizontalAlignment', 'left', 'LabelVerticalAlignment', 'bottom');
     grid on; box on;
+    set(gca, 'Color', 'w', 'XColor', 'k', 'YColor', 'k', 'GridColor', 'k', 'GridAlpha', 0.35);
     xlim([0, 120]); ylim([10.0, 14.0]);
     title('\textbf{Panel 3: Stable Regulated Output Voltage $v_o(t)$ under Full 1.20\,A Load ($R_L = 10.0\,\Omega$)}', ...
-          'Interpreter', 'latex', 'FontSize', 11);
-    ylabel('$v_o(t)$ [V]', 'Interpreter', 'latex', 'FontSize', 10);
+          'Interpreter', 'latex', 'FontSize', 11, 'Color', 'k');
+    ylabel('$v_o(t)$ [V]', 'Interpreter', 'latex', 'FontSize', 10, 'Color', 'k');
 
     % Subplot 4: High-Frequency Residual Error & Ripple Zoom
     subplot(4, 1, 4);
     delta_vo_mv = (vout_eval - 12.0) * 1000;
-    plot(t_eval * 1000, delta_vo_mv, 'Color', [0.15, 0.15, 0.15], 'LineWidth', 1.2);
+    plot(t_eval * 1000, delta_vo_mv, 'Color', [0.85, 0.1, 0.1], 'LineWidth', 2.0);
     grid on; box on;
+    set(gca, 'Color', 'w', 'XColor', 'k', 'YColor', 'k', 'GridColor', 'k', 'GridAlpha', 0.35);
     xlim([20, 120]);
     title('\textbf{Panel 4: Residual Output Perturbation $\Delta v_o(t) = v_o(t) - 12\,\mathrm{V}$ (Zoomed at mV scale)}', ...
-          'Interpreter', 'latex', 'FontSize', 11);
-    xlabel('Time [ms]', 'Interpreter', 'latex', 'FontSize', 10);
-    ylabel('$\Delta v_o$ [mV]', 'Interpreter', 'latex', 'FontSize', 10);
+          'Interpreter', 'latex', 'FontSize', 11, 'Color', 'k');
+    xlabel('Time [ms]', 'Interpreter', 'latex', 'FontSize', 10, 'Color', 'k');
+    ylabel('$\Delta v_o$ [mV]', 'Interpreter', 'latex', 'FontSize', 10, 'Color', 'k');
 
     % Export high-resolution PNG artifact
     [this_dir, ~, ~] = fileparts(mfilename('fullpath'));

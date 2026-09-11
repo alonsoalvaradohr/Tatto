@@ -213,58 +213,66 @@ function simscape_integrated_system()
     fprintf('==================================================================\n\n');
 
     %% ---------------------------------------------------------------------
-    %% 6. COMPREHENSIVE MULTI-PANEL VISUALIZATION
+    %% 6. COMPREHENSIVE MULTI-PANEL VISUALIZATION (HIGH-CONTRAST WHITE THEME)
     %% ---------------------------------------------------------------------
     fig = figure('Name', 'Discrete Linear Regulator — Digital Twin Simulation', ...
                  'Color', 'w', 'Position', [80, 50, 1100, 850], 'Visible', 'off');
+    set(gcf, 'Color', 'w');
 
     % Subplot 1: Stage 1 Raw DC Rail & Secondary AC
     subplot(3, 2, 1);
-    plot(t_vec * 1e3, v_sec, 'Color', [0.3, 0.5, 0.8], 'LineWidth', 1.0); hold on;
-    plot(t_vec * 1e3, v_raw, 'Color', [0.8, 0.2, 0.2], 'LineWidth', 1.6);
+    plot(t_vec * 1e3, v_sec, 'Color', [0.0, 0.45, 0.9], 'LineWidth', 2.0); hold on;
+    plot(t_vec * 1e3, v_raw, 'Color', [0.85, 0.1, 0.1], 'LineWidth', 2.0);
     grid on; box on;
-    title('{\bf Stage 1: Tensión Secundaria y Riel Raw DC } V_{RAW}(t)', 'Interpreter', 'tex');
-    xlabel('Tiempo [ms]', 'Interpreter', 'tex');
-    ylabel('Tensión [V]', 'Interpreter', 'tex');
-    legend('v_{sec}(t)', 'V_{RAW}(t)', 'Location', 'northeast');
+    set(gca, 'Color', 'w', 'XColor', 'k', 'YColor', 'k', 'GridColor', 'k', 'GridAlpha', 0.35);
+    title('{\bf Stage 1: Tensión Secundaria y Riel Raw DC } V_{RAW}(t)', 'Interpreter', 'tex', 'Color', 'k');
+    xlabel('Tiempo [ms]', 'Interpreter', 'tex', 'Color', 'k');
+    ylabel('Tensión [V]', 'Interpreter', 'tex', 'Color', 'k');
+    legend('v_{sec}(t)', 'V_{RAW}(t)', 'Location', 'northeast', 'Color', 'w', 'TextColor', 'k', 'EdgeColor', [0.5, 0.5, 0.5]);
     xlim([0, 50]);
 
     % Subplot 2: Stage 5 Regulated Output Voltage with Load Step
     subplot(3, 2, 2);
-    plot(t_vec * 1e3, v_out, 'Color', [0.1, 0.6, 0.2], 'LineWidth', 1.8); hold on;
-    xline(p.t_step * 1e3, 'Color', [0.4, 0.4, 0.4], 'LineStyle', '--', 'LineWidth', 1.1, ...
-          'Label', 'Paso de Carga (10\Omega \rightarrow 7\Omega)', 'LabelHorizontalAlignment', 'center');
-    yline(V_out_target, 'Color', [0.2, 0.2, 0.2], 'LineStyle', ':', 'LineWidth', 1.0, ...
-          'Label', sprintf('V_{target} = %.2f V', V_out_target));
+    plot(t_vec * 1e3, v_out, 'Color', [0.05, 0.65, 0.2], 'LineWidth', 2.0); hold on;
+    xline(p.t_step * 1e3, 'Color', 'k', 'LineStyle', '--', 'LineWidth', 1.3, ...
+          'Label', 'Paso de Carga', 'LabelOrientation', 'horizontal', ...
+          'LabelHorizontalAlignment', 'center', 'LabelVerticalAlignment', 'bottom', 'Color', 'k');
+    yline(V_out_target, 'Color', 'k', 'LineStyle', ':', 'LineWidth', 1.3, ...
+          'Label', sprintf('V_{target} = %.2f V', V_out_target), ...
+          'LabelHorizontalAlignment', 'left', 'LabelVerticalAlignment', 'bottom', 'Color', 'k');
     grid on; box on;
+    set(gca, 'Color', 'w', 'XColor', 'k', 'YColor', 'k', 'GridColor', 'k', 'GridAlpha', 0.35);
     title(sprintf('{\\bf Stage 5: Tensión Regulada de Salida } v_o(t) {\\bf [Rizado: %.2f mV]}', V_out_rip_num*1e3), ...
-          'Interpreter', 'tex');
-    xlabel('Tiempo [ms]', 'Interpreter', 'tex');
-    ylabel('Tensión [V]', 'Interpreter', 'tex');
+          'Interpreter', 'tex', 'Color', 'k');
+    xlabel('Tiempo [ms]', 'Interpreter', 'tex', 'Color', 'k');
+    ylabel('Tensión [V]', 'Interpreter', 'tex', 'Color', 'k');
     xlim([0, 50]);
     ylim([0, V_out_target * 1.25]);
 
     % Subplot 3: Stage 2 & 4 VAS Drive and Reference Node
     subplot(3, 2, 3);
-    plot(t_vec * 1e3, v_VAS, 'Color', [0.6, 0.2, 0.7], 'LineWidth', 1.6); hold on;
-    plot(t_vec * 1e3, v_ref, 'Color', [0.9, 0.5, 0.1], 'LineWidth', 1.5);
-    plot(t_vec * 1e3, v_fb,  'Color', [0.2, 0.6, 0.8], 'LineStyle', '--', 'LineWidth', 1.2);
+    plot(t_vec * 1e3, v_VAS, 'Color', [0.6, 0.1, 0.75], 'LineWidth', 2.0); hold on;
+    plot(t_vec * 1e3, v_ref, 'Color', [0.95, 0.45, 0.0], 'LineWidth', 2.0);
+    plot(t_vec * 1e3, v_fb,  'Color', [0.0, 0.65, 0.85], 'LineStyle', '--', 'LineWidth', 1.8);
     grid on; box on;
-    title('{\bf Stages 2, 3, 4: Nodos Internos } (v_{VAS}, V_{ref}, v_{fb})', 'Interpreter', 'tex');
-    xlabel('Tiempo [ms]', 'Interpreter', 'tex');
-    ylabel('Tensión [V]', 'Interpreter', 'tex');
-    legend('v_{VAS} (Drive)', 'V_{ref} (Zener)', 'v_{fb} (Divisor)', 'Location', 'best');
+    set(gca, 'Color', 'w', 'XColor', 'k', 'YColor', 'k', 'GridColor', 'k', 'GridAlpha', 0.35);
+    title('{\bf Stages 2, 3, 4: Nodos Internos } (v_{VAS}, V_{ref}, v_{fb})', 'Interpreter', 'tex', 'Color', 'k');
+    xlabel('Tiempo [ms]', 'Interpreter', 'tex', 'Color', 'k');
+    ylabel('Tensión [V]', 'Interpreter', 'tex', 'Color', 'k');
+    legend('v_{VAS} (Drive)', 'V_{ref} (Zener)', 'v_{fb} (Divisor)', 'Location', 'best', 'Color', 'w', 'TextColor', 'k', 'EdgeColor', [0.5, 0.5, 0.5]);
     xlim([0, 50]);
 
     % Subplot 4: Output Current and Current Limit Protection
     subplot(3, 2, 4);
-    plot(t_vec * 1e3, i_out, 'Color', [0.85, 0.35, 0.0], 'LineWidth', 1.8); hold on;
-    yline(I_out_limit, 'Color', [0.8, 0.0, 0.0], 'LineStyle', '--', 'LineWidth', 1.2, ...
-          'Label', sprintf('Límite I_{sc} = %.2f A', I_out_limit));
+    plot(t_vec * 1e3, i_out, 'Color', [0.95, 0.4, 0.0], 'LineWidth', 2.0); hold on;
+    yline(I_out_limit, 'Color', [0.85, 0.0, 0.0], 'LineStyle', '--', 'LineWidth', 1.5, ...
+          'Label', sprintf('Límite I_{sc} = %.2f A', I_out_limit), ...
+          'LabelHorizontalAlignment', 'center', 'LabelVerticalAlignment', 'bottom', 'Color', [0.85, 0.0, 0.0]);
     grid on; box on;
-    title('{\bf Corriente de Salida } i_{out}(t) {\bf y Protección Limitadora}', 'Interpreter', 'tex');
-    xlabel('Tiempo [ms]', 'Interpreter', 'tex');
-    ylabel('Corriente [A]', 'Interpreter', 'tex');
+    set(gca, 'Color', 'w', 'XColor', 'k', 'YColor', 'k', 'GridColor', 'k', 'GridAlpha', 0.35);
+    title('{\bf Corriente de Salida } i_{out}(t) {\bf y Protección Limitadora}', 'Interpreter', 'tex', 'Color', 'k');
+    xlabel('Tiempo [ms]', 'Interpreter', 'tex', 'Color', 'k');
+    ylabel('Corriente [A]', 'Interpreter', 'tex', 'Color', 'k');
     xlim([0, 50]);
     ylim([0, I_out_limit * 1.35]);
 
@@ -276,21 +284,24 @@ function simscape_integrated_system()
     f_bode   = w_bode / (2 * pi);
 
     yyaxis left
-    semilogx(f_bode, mag_dB, 'Color', [0.15, 0.3, 0.75], 'LineWidth', 1.8);
+    semilogx(f_bode, mag_dB, 'Color', [0.0, 0.3, 0.8], 'LineWidth', 2.0);
     ylabel('Magnitud de Lazo [dB]', 'Interpreter', 'tex', 'FontSize', 10);
     ylim([-40, 80]);
-    yline(0, 'Color', [0.5, 0.5, 0.5], 'LineStyle', '--', 'LineWidth', 0.8);
+    yline(0, 'Color', [0.3, 0.3, 0.3], 'LineStyle', '--', 'LineWidth', 1.0);
+    set(gca, 'YColor', [0.0, 0.3, 0.8]);
 
     yyaxis right
-    semilogx(f_bode, phase_deg, 'Color', [0.75, 0.2, 0.2], 'LineWidth', 1.8);
+    semilogx(f_bode, phase_deg, 'Color', [0.85, 0.1, 0.1], 'LineWidth', 2.0);
     ylabel('Fase de Lazo [grados]', 'Interpreter', 'tex', 'FontSize', 10);
     ylim([-180, 0]);
-    yline(-180, 'Color', [0.7, 0.2, 0.2], 'LineStyle', ':', 'LineWidth', 1.0);
+    yline(-180, 'Color', [0.85, 0.1, 0.1], 'LineStyle', ':', 'LineWidth', 1.2);
+    set(gca, 'YColor', [0.85, 0.1, 0.1]);
 
     grid on; box on;
+    set(gca, 'Color', 'w', 'XColor', 'k', 'GridColor', 'k', 'GridAlpha', 0.35);
     title(sprintf('{\\bf Respuesta en Frecuencia a Lazo Abierto (Bode): Margen de Fase PM = %.1f^\\circ } [f_c = %.1f kHz, PSRR = %.1f dB]', ...
-          Pm, f_crossover/1e3, PSRR_dB), 'Interpreter', 'tex');
-    xlabel('Frecuencia [Hz]', 'Interpreter', 'tex');
+          Pm, f_crossover/1e3, PSRR_dB), 'Interpreter', 'tex', 'Color', 'k');
+    xlabel('Frecuencia [Hz]', 'Interpreter', 'tex', 'Color', 'k');
 
     % Export High-Resolution Verification Figure to Absolute Workspace Path
     plot_out = '.simulations\matlab\integrated_system_response.png';

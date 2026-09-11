@@ -124,37 +124,40 @@ function simscape_transformer_bridge()
     %% 5. DUAL-CHANNEL OSCILLOSCOPE VISUALIZATION (Matching TikZ Scopes)
     %% ---------------------------------------------------------------------
     fig = figure('Name', 'Stage 1: Transformer & Bridge Rectifier Simulation', ...
-                 'Color', 'w', 'Position', [100, 100, 950, 650]);
+                 'Color', 'w', 'Position', [100, 100, 950, 650], 'Visible', 'off');
+    set(gcf, 'Color', 'w');
 
     % Channel 1: Secondary AC Voltage v_TP1(t)
     subplot(2, 1, 1);
-    plot(t_vec * 1e3, v_TP1, 'Color', [0.15, 0.35, 0.75], 'LineWidth', 1.8);
+    plot(t_vec * 1e3, v_TP1, 'Color', [0.0, 0.45, 0.9], 'LineWidth', 2.0);
     hold on; grid on; box on;
+    set(gca, 'Color', 'w', 'XColor', 'k', 'YColor', 'k', 'GridColor', 'k', 'GridAlpha', 0.35);
     yline(0, 'Color', [0.4, 0.4, 0.4], 'LineStyle', '--', 'LineWidth', 0.8);
-    yline(V_sec_pk, 'Color', [0.2, 0.5, 0.8], 'LineStyle', ':', 'LineWidth', 1.0, ...
-          'Label', sprintf('+V_{sec,pk} = +%.2f V', V_sec_pk), 'LabelHorizontalAlignment', 'left');
-    yline(-V_sec_pk, 'Color', [0.2, 0.5, 0.8], 'LineStyle', ':', 'LineWidth', 1.0, ...
-          'Label', sprintf('-V_{sec,pk} = -%.2f V', -V_sec_pk), 'LabelHorizontalAlignment', 'left');
-    title('{\bf CH1: Tensión Alterna del Secundario } v_{sec}(t) {\bf [Punto de Prueba TP_1]}', 'Interpreter', 'tex');
-    xlabel('Tiempo [ms]', 'Interpreter', 'tex', 'FontSize', 10);
-    ylabel('Tensión [V]', 'Interpreter', 'tex', 'FontSize', 10);
+    yline(V_sec_pk, 'Color', [0.2, 0.5, 0.8], 'LineStyle', ':', 'LineWidth', 1.2, ...
+          'Label', sprintf('+V_{sec,pk} = +%.2f V', V_sec_pk), 'LabelHorizontalAlignment', 'left', 'Color', 'k');
+    yline(-V_sec_pk, 'Color', [0.2, 0.5, 0.8], 'LineStyle', ':', 'LineWidth', 1.2, ...
+          'Label', sprintf('-V_{sec,pk} = -%.2f V', -V_sec_pk), 'LabelHorizontalAlignment', 'left', 'Color', 'k');
+    title('{\bf CH1: Tensión Alterna del Secundario } v_{sec}(t) {\bf [Punto de Prueba TP_1]}', 'Interpreter', 'tex', 'Color', 'k');
+    xlabel('Tiempo [ms]', 'Interpreter', 'tex', 'FontSize', 10, 'Color', 'k');
+    ylabel('Tensión [V]', 'Interpreter', 'tex', 'FontSize', 10, 'Color', 'k');
     xlim([0, 50]);
     ylim([-V_sec_pk * 1.25, V_sec_pk * 1.25]);
 
     % Channel 2: Raw DC Rail v_TP2(t) with Ripple
     subplot(2, 1, 2);
-    plot(t_vec * 1e3, v_TP2, 'Color', [0.75, 0.15, 0.15], 'LineWidth', 1.8);
+    plot(t_vec * 1e3, v_TP2, 'Color', [0.85, 0.1, 0.1], 'LineWidth', 2.0);
     hold on; grid on; box on;
-    yline(V_raw_max_num, 'Color', [0.8, 0.2, 0.2], 'LineStyle', ':', 'LineWidth', 1.0, ...
-          'Label', sprintf('V_{RAW,max} = %.2f V', V_raw_max_num), 'LabelHorizontalAlignment', 'left');
-    yline(V_raw_min_num, 'Color', [0.8, 0.2, 0.2], 'LineStyle', ':', 'LineWidth', 1.0, ...
-          'Label', sprintf('V_{RAW,min} = %.2f V', V_raw_min_num), 'LabelHorizontalAlignment', 'left');
-    yline(V_dc_avg_num, 'Color', [0.3, 0.3, 0.3], 'LineStyle', '--', 'LineWidth', 1.0, ...
-          'Label', sprintf('V_{RAW,avg} = %.2f V', V_dc_avg_num), 'LabelHorizontalAlignment', 'right');
+    set(gca, 'Color', 'w', 'XColor', 'k', 'YColor', 'k', 'GridColor', 'k', 'GridAlpha', 0.35);
+    yline(V_raw_max_num, 'Color', [0.8, 0.2, 0.2], 'LineStyle', ':', 'LineWidth', 1.2, ...
+          'Label', sprintf('V_{RAW,max} = %.2f V', V_raw_max_num), 'LabelHorizontalAlignment', 'left', 'Color', 'k');
+    yline(V_raw_min_num, 'Color', [0.8, 0.2, 0.2], 'LineStyle', ':', 'LineWidth', 1.2, ...
+          'Label', sprintf('V_{RAW,min} = %.2f V', V_raw_min_num), 'LabelHorizontalAlignment', 'left', 'Color', 'k');
+    yline(V_dc_avg_num, 'Color', [0.3, 0.3, 0.3], 'LineStyle', '--', 'LineWidth', 1.2, ...
+          'Label', sprintf('V_{RAW,avg} = %.2f V', V_dc_avg_num), 'LabelHorizontalAlignment', 'right', 'Color', 'k');
     title(sprintf('{\\bf CH2: Riel DC No Regulado } V_{RAW}(t) {\\bf [TP_2]  (Rizado } \\Delta V_{ripple} = %.3f V {\\bf )}', V_ripple_num), ...
-          'Interpreter', 'tex');
-    xlabel('Tiempo [ms]', 'Interpreter', 'tex', 'FontSize', 10);
-    ylabel('Tensión [V]', 'Interpreter', 'tex', 'FontSize', 10);
+          'Interpreter', 'tex', 'Color', 'k');
+    xlabel('Tiempo [ms]', 'Interpreter', 'tex', 'FontSize', 10, 'Color', 'k');
+    ylabel('Tensión [V]', 'Interpreter', 'tex', 'FontSize', 10, 'Color', 'k');
     xlim([0, 50]);
     ylim([0, V_sec_pk * 1.15]);
 
@@ -162,6 +165,7 @@ function simscape_transformer_bridge()
     plot_out = fullfile(fileparts(mfilename('fullpath')), 'stage1_simulation_response.png');
     exportgraphics(fig, plot_out, 'Resolution', 300);
     fprintf('Saved simulation response figure to: %s\n', plot_out);
+    close(fig);
 end
 
 %% =========================================================================
