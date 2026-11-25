@@ -1,3 +1,5 @@
+% SPDX-License-Identifier: CERN-OHL-S-2.0
+% Copyright (C) 2024-2026 Alonso Alvarado Hernández <alonsoalvaradohr>
 %% =========================================================================
 %% TATTO PROJECT — STAGE 1: TRANSFORMER & FULL-WAVE BRIDGE RECTIFIER
 %% File: simscape_transformer_bridge.m

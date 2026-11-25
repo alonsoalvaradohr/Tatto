@@ -1,0 +1,22 @@
+cff-version: 1.2.0
+message: "If you use Proyecto Tatto in your research, academic work, or hardware designs, please cite it as below."
+title: "Proyecto Tatto: Arquitectura Unificada de Fuente Lineal (LaTeX / CircuiTikZ)"
+version: "1.0.0"
+date-released: "2026-11-25"
+license: "CERN-OHL-S-2.0"
+repository-code: "https://github.com/alonsoalvaradohr/Tatto"
+authors:
+  - family-names: "Alvarado Hernández"
+    given-names: "Alonso"
+    alias: "alonsoalvaradohr"
+abstract: "Proyecto Tatto es una arquitectura unificada de fuente de alimentacion lineal de precision documentada en LaTeX y CircuiTikZ bajo estricta normativa IEEE Std 315 y modelada parametricamente con gemelos digitales en MATLAB/Simscape y SPICE."
+keywords:
+  - "circuitikz"
+  - "latex"
+  - "linear-power-supply"
+  - "open-hardware"
+  - "cern-ohl-s"
+  - "ieee-315"
+  - "discrete-electronics"
+  - "matlab"
+  - "simscape"

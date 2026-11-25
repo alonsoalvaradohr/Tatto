@@ -1,3 +1,5 @@
+% SPDX-License-Identifier: CERN-OHL-S-2.0
+% Copyright (C) 2024-2026 Alonso Alvarado Hernández <alonsoalvaradohr>
 %% =========================================================================
 %% TATTO PROJECT — MASTER INTEGRATED SYSTEM: BARE-METAL DISCRETE SILICON
 %% File: simscape_integrated_system.m

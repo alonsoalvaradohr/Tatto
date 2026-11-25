@@ -1,3 +1,5 @@
+% SPDX-License-Identifier: CERN-OHL-S-2.0
+% Copyright (C) 2024-2026 Alonso Alvarado Hernández <alonsoalvaradohr>
 %% =========================================================================
 %% TATTO PROJECT — ULTIMATE HOSTILE STRESS-TEST ORACLE (PHASE 8.3)
 %% File: simulations/matlab/stress_testbench.m

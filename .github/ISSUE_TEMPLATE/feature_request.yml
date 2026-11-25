@@ -1,0 +1,29 @@
+name: Propuesta de Mejora (Feature Request)
+description: Proponer una nueva etapa de circuito, refinamiento topológico o mejora en gemelos digitales.
+title: "[FEATURE]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: Gracias por proponer una mejora para Proyecto Tatto. Por favor detalla la justificación técnica.
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Descripción de la Mejora
+      description: Explica con claridad la funcionalidad, topología o mejora de renderizado que propones incorporar.
+    validations:
+      required: true
+  - type: textarea
+    id: rationale
+    attributes:
+      label: Justificación y Base Técnica
+      description: ¿Por qué esta mejora aporta valor a la arquitectura de fuente lineal? Cita fuentes o normas IEEE si aplica.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternativas Consideradas
+      description: Qué otras configuraciones o enfoques se han analizado y por qué se descartan frente a la propuesta.
+    validations:
+      required: false

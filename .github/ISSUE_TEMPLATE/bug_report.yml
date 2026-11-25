@@ -1,0 +1,40 @@
+name: Reporte de Error (Bug Report)
+description: Reportar un error en la renderización de esquemáticos CircuiTikZ, cálculo matemático o simulación.
+title: "[BUG]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: Gracias por reportar un problema en Proyecto Tatto. Por favor completa los campos siguientes.
+  - type: textarea
+    id: description
+    attributes:
+      label: Descripción del Problema
+      description: Explica de forma clara y concisa el error detectado (ej. solapamiento de nodos, error de compilación TeX, discrepancia matemática).
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Pasos para Reproducir
+      description: Pasos exactos o comandos para reproducir el fallo.
+      placeholder: |
+        1. Compilar 'main.tex' con lualatex...
+        2. Observar advertencia o error en figura...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Comportamiento Esperado
+      description: Qué resultado visual o numérico se esperaba de acuerdo a la normativa IEEE y los gemelos de simulación.
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Entorno de Ejecución
+      description: Versión de TeX Live, LuaLaTeX, CircuiTikZ o versión de MATLAB.
+      placeholder: e.g., TeX Live 2025 / CircuiTikZ 1.8.5 / MATLAB R2024b
+    validations:
+      required: false
